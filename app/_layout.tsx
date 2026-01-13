@@ -1,24 +1,28 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack
+      screenOptions={{
+        // Personnalisation de la barre du haut (Header)
+        headerStyle: {
+          backgroundColor: '#005f73',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+        // Enlève le titre par défaut pour un look plus moderne
+        headerShadowVisible: false, 
+      }}
+    >
+      {/* On définit nos pages ici */}
+      <Stack.Screen name="(tabs)/index" options={{ title: 'Accueil' }} />
+      <Stack.Screen name="(tabs)/signalement" options={{ title: 'Signaler un incident' }} />
+      <Stack.Screen name="(tabs)/cellule" options={{ title: 'La Cellule' }} />
+      <Stack.Screen name="(tabs)/numeros" options={{ title: 'Numéros Utiles' }} />
+      <Stack.Screen name="(tabs)/contact" options={{ title: 'Contact' }} />
+      <Stack.Screen name="admin/login" options={{ title: 'Connexion Intervenant' }} />
+    </Stack>
   );
 }
