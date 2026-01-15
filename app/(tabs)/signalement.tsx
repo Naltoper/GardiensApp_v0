@@ -1,6 +1,7 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch, ScrollView, Alert } from 'react-native';
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import * as SecureStore from 'expo-secure-store';
 
 export default function SignalementScreen() {
   const [isAnonyme, setIsAnonyme] = useState(true);
