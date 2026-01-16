@@ -19,6 +19,7 @@ export default function RootLayout() {
       {/* On définit nos pages ici */}
       <Stack.Screen name="(tabs)/index" options={{ title: 'Accueil' }} />
       <Stack.Screen name="(tabs)/signalement" options={{ title: 'Signaler un incident' }} />
+      <Stack.Screen name="(tabs)/mes-signalements" options={{ title: 'Mes Signalements' }} />
       <Stack.Screen name="(tabs)/cellule" options={{ title: 'La Cellule' }} />
       <Stack.Screen name="(tabs)/numeros" options={{ title: 'Numéros Utiles' }} />
       <Stack.Screen name="(tabs)/contact" options={{ title: 'Contact' }} />
