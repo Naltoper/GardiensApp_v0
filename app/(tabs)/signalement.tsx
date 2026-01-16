@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch, ScrollView, Alert, Platform } from 'react-native';
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
@@ -17,7 +17,32 @@ export default function SignalementScreen() {
     }
 
     setLoading(true);
-    const userToken = "user_" + Math.random().toString(36).slice(2, 9);
+
+    // --- GESTION DU TOKEN UNIQUE ---
+    let userToken;
+    const TOKEN_KEY = 'user_report_token';
+
+    try {
+      if (Platform.OS === 'web') {
+        // Version Web : Utilisation du localStorage
+        userToken = localStorage.getItem(TOKEN_KEY);
+        if (!userToken) {
+          userToken = "user_" + Math.random().toString(36).slice(2, 9);
+          localStorage.setItem(TOKEN_KEY, userToken);
+        }
+      } else {
+        // Version Mobile : Utilisation de SecureStore
+        userToken = await SecureStore.getItemAsync(TOKEN_KEY);
+        if (!userToken) {
+          userToken = "user_" + Math.random().toString(36).slice(2, 9);
+          await SecureStore.setItemAsync(TOKEN_KEY, userToken);
+        }
+      }
+    } catch (e) {
+      console.error("Erreur lors de la gestion du token", e);
+      // Fallback au cas où le stockage échoue
+      userToken = "temp_" + Math.random().toString(36).slice(2, 9);
+    }
 
     const { error } = await supabase
       .from('reports')
