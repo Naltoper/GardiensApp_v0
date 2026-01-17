@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, Platform, Touchabl
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
+import { MessageCircle } from 'lucide-react-native'; // Icône pour le footer
 
 export default function MesSignalementsScreen() {
   const [reports, setReports] = useState<any[]>([]);
@@ -46,7 +47,6 @@ export default function MesSignalementsScreen() {
     fetchReports();
   }, []);
 
-  // --- FONCTION DE FORMATAGE DATE ET HEURE ---
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('fr-FR', {
@@ -55,24 +55,26 @@ export default function MesSignalementsScreen() {
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    }).replace(' ', ' à '); // Remplace l'espace entre date et heure par " à "
+    }).replace(' ', ' à ');
   };
 
   const renderItem = ({ item }: { item: any }) => {
+    // Statuts cohérents avec les couleurs de l'accueil
     const isProcessed = item.status !== 'Non traité';
+    const statusColor = isProcessed ? '#10ac56' : '#00b4d8';
     
     return (
       <TouchableOpacity 
-        activeOpacity={0.7} 
-        style={[styles.card, { borderLeftColor: isProcessed ? '#2a9d8f' : '#ffb703' }]}
+        activeOpacity={0.8} 
+        style={[styles.card, { borderLeftColor: statusColor }]}
       >
         <View style={styles.cardHeader}>
           <Text style={styles.date}>
             Posté le {formatDateTime(item.created_at)}
           </Text>
-          <View style={[styles.badge, { backgroundColor: isProcessed ? '#e6f4f1' : '#fff3cd' }]}>
-            <View style={[styles.dot, { backgroundColor: isProcessed ? '#2a9d8f' : '#ffb703' }]} />
-            <Text style={[styles.badgeText, { color: isProcessed ? '#2a9d8f' : '#996500' }]}>
+          <View style={[styles.badge, { backgroundColor: isProcessed ? '#e6f4f1' : '#e0f2fe' }]}>
+            <View style={[styles.dot, { backgroundColor: statusColor }]} />
+            <Text style={[styles.badgeText, { color: statusColor }]}>
               {item.status}
             </Text>
           </View>
@@ -83,7 +85,10 @@ export default function MesSignalementsScreen() {
         </Text>
 
         <View style={styles.cardFooter}>
-          <Text style={styles.footerLink}>Discuter avec un intervenant</Text>
+          <View style={styles.footerLeft}>
+            <MessageCircle size={16} color="#48a4f4" style={{ marginRight: 8 }} />
+            <Text style={styles.footerLink}>Discuter avec un intervenant</Text>
+          </View>
           <Text style={styles.arrow}>→</Text>
         </View>
       </TouchableOpacity>
@@ -93,7 +98,7 @@ export default function MesSignalementsScreen() {
   if (loading && !refreshing) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#e63946" />
+        <ActivityIndicator size="large" color="#48a4f4" />
       </View>
     );
   }
@@ -108,11 +113,12 @@ export default function MesSignalementsScreen() {
         renderItem={renderItem}
         contentContainerStyle={styles.listContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#e63946" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#48a4f4" />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>Tu n&apos;as pas encore envoyé de signalement.</Text>
+            <Text style={styles.emptySubText}>Tes futurs messages s&apos;afficheront ici en toute sécurité.</Text>
           </View>
         }
       />
@@ -123,7 +129,7 @@ export default function MesSignalementsScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#F0F2F5' 
+    backgroundColor: 'transparent' 
   },
   loaderContainer: { 
     flex: 1, 
@@ -133,26 +139,26 @@ const styles = StyleSheet.create({
   title: { 
     fontSize: 28, 
     fontWeight: '800', 
-    marginHorizontal: 20, 
-    marginTop: 30, 
+    marginHorizontal: 24, 
+    marginTop: 20, 
     marginBottom: 20, 
-    color: '#1d3557' 
+    color: '#023e8a' // Bleu foncé de l'index
   },
   listContent: { 
-    paddingHorizontal: 20, 
+    paddingHorizontal: 24, 
     paddingBottom: 40 
   },
   card: { 
     backgroundColor: '#fff', 
-    padding: 18, 
-    borderRadius: 16, 
+    padding: 20, 
+    borderRadius: 20, // Arrondis plus doux comme l'index
     marginBottom: 16, 
-    borderLeftWidth: 5,
+    borderLeftWidth: 6,
+    elevation: 3,
     shadowColor: '#000', 
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08, 
-    shadowRadius: 12, 
-    elevation: 4 
+    shadowOpacity: 0.05, 
+    shadowRadius: 10, 
   },
   cardHeader: { 
     flexDirection: 'row', 
@@ -161,34 +167,34 @@ const styles = StyleSheet.create({
     marginBottom: 12 
   },
   date: { 
-    color: '#8898AA', 
-    fontSize: 13, 
-    fontWeight: '500' 
+    color: '#94a3b8', 
+    fontSize: 12, 
+    fontWeight: '600' 
   },
   badge: { 
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10, 
-    paddingVertical: 4, 
+    paddingHorizontal: 12, 
+    paddingVertical: 5, 
     borderRadius: 20 
   },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
     marginRight: 6
   },
   badgeText: { 
-    fontSize: 11, 
-    fontWeight: '700',
+    fontSize: 10, 
+    fontWeight: '800',
     textTransform: 'uppercase'
   },
   content: { 
-    fontSize: 16, 
+    fontSize: 15, 
     lineHeight: 22,
-    color: '#344767', 
+    color: '#334155', 
     marginBottom: 15,
-    fontWeight: '400'
+    fontWeight: '500'
   },
   cardFooter: {
     flexDirection: 'row',
@@ -196,26 +202,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F0F2F5'
+    borderTopColor: '#f1f5f9'
+  },
+  footerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   footerLink: { 
-    fontSize: 14, 
-    color: '#457b9d', 
-    fontWeight: '600' 
+    fontSize: 13, 
+    color: '#00b4d8', 
+    fontWeight: '700' 
   },
   arrow: {
-    fontSize: 16,
-    color: '#457b9d'
+    fontSize: 18,
+    color: '#00b4d8',
+    fontWeight: 'bold'
   },
   emptyContainer: {
     alignItems: 'center',
-    marginTop: 100
+    marginTop: 80,
+    paddingHorizontal: 40
   },
   emptyText: { 
     textAlign: 'center', 
-    color: '#8898AA', 
+    color: '#64748b', 
     fontSize: 16,
-    lineHeight: 24,
-    paddingHorizontal: 40
+    fontWeight: '700',
+    marginBottom: 10
+  },
+  emptySubText: {
+    textAlign: 'center', 
+    color: '#94a3b8', 
+    fontSize: 14,
+    lineHeight: 20
   }
 });

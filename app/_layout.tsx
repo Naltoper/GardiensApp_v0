@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 
 export default function RootLayout() {
-  const bgColor = '#b7d9d8ff'; // Définis ta couleur ici une seule fois
+  const bgColor = '#bfdbdac3'; // Définis ta couleur ici une seule fois
 
   return (
     <SafeAreaProvider>
@@ -22,7 +22,7 @@ export default function RootLayout() {
             contentStyle: { backgroundColor: bgColor }, 
           }}
         >
-          {/* Accueil : Pas de header */}
+          {/* Pas de header */}
           <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} /> 
           <Stack.Screen name="(tabs)/signalement" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)/mes-signalements" options={{ headerShown: false }} />
@@ -30,6 +30,8 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)/numeros" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)/contact" options={{ headerShown: false }} />
           <Stack.Screen name="admin/login" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/dashboard" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/chat/[id]" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaView>
     </SafeAreaProvider>

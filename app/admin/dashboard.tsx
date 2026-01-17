@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, To
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
+import { MessageCircle, Clock, User, Shield } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function DashboardScreen() {
   const [reports, setReports] = useState<any[]>([]);
@@ -34,59 +36,89 @@ export default function DashboardScreen() {
     setRefreshing(false);
   };
 
-  // Fonction pour formater la date et l'heure
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    const day = date.toLocaleDateString('fr-FR');
-    const time = date.toLocaleTimeString('fr-FR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-    return `${day} à ${time}`;
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).replace(',', ' à');
   };
 
-  const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.typeText}>{item.is_anonyme ? "👤 Anonyme" : `📢 ${item.author_name}`}</Text>
-        <Text style={styles.dateText}>{formatDateTime(item.created_at)}</Text>
-      </View>
-      
-      <Text style={styles.reportText}>{item.content}</Text>
-      
-      {/* Bouton pour ouvrir la discussion */}
-      <TouchableOpacity 
-        style={styles.replyBtn} 
-        onPress={() => router.push(`/admin/chat/${item.id}`)}
-      >
-        <Text style={styles.replyBtnText}>💬 Répondre à l&apos;élève</Text>
-      </TouchableOpacity>
+  const renderItem = ({ item }: { item: any }) => {
+    const isPending = item.status === 'Non traité';
 
-      <View style={styles.footer}>
-        <View style={[styles.badge, { backgroundColor: item.status === 'Non traité' ? '#e63946' : '#2a9d8f' }]}>
-          <Text style={styles.badgeText}>{item.status}</Text>
+    return (
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <View style={styles.authorContainer}>
+            {item.is_anonyme ? <Shield size={16} color="#64748b" /> : <User size={16} color="#023e8a" />}
+            <Text style={[styles.typeText, { color: item.is_anonyme ? '#64748b' : '#023e8a' }]}>
+              {item.is_anonyme ? " Anonyme" : ` ${item.author_name}`}
+            </Text>
+          </View>
+          <View style={styles.dateContainer}>
+            <Clock size={12} color="#94a3b8" />
+            <Text style={styles.dateText}> {formatDateTime(item.created_at)}</Text>
+          </View>
         </View>
-        <Text style={styles.tokenText}>ID: {item.user_token.split('_')[1]}</Text>
+        
+        <Text style={styles.reportText}>{item.content}</Text>
+        
+        <TouchableOpacity 
+          activeOpacity={0.8}
+          onPress={() => router.push(`/admin/chat/${item.id}`)}
+        >
+          <LinearGradient
+            colors={["#48a4f4", "#00b4d8"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.replyBtn}
+          >
+            <MessageCircle size={18} color="white" style={{ marginRight: 8 }} />
+            <Text style={styles.replyBtnText}>Répondre à l&apos;élève</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        <View style={styles.footer}>
+          <View style={[styles.badge, { backgroundColor: isPending ? '#e0f2fe' : '#e6f4f1' }]}>
+            <View style={[styles.dot, { backgroundColor: isPending ? '#00b4d8' : '#10ac56' }]} />
+            <Text style={[styles.badgeText, { color: isPending ? '#00b4d8' : '#10ac56' }]}>
+              {item.status}
+            </Text>
+          </View>
+          <Text style={styles.tokenText}>ID: {item.user_token?.split('_')[1] || '---'}</Text>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Signalements reçus</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Espace Intervenants</Text>
+        <Text style={styles.subtitle}>{reports.length} signalement(s) au total</Text>
+      </View>
       
       {loading && !refreshing ? (
-        <ActivityIndicator size="large" color="#1d3557" />
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#023e8a" />
+        </View>
       ) : (
         <FlatList
           data={reports}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ padding: 24, paddingBottom: 40 }}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#023e8a" />
           }
-          ListEmptyComponent={<Text style={styles.empty}>Aucun signalement pour le moment.</Text>}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.empty}>Aucun signalement pour le moment.</Text>
+            </View>
+          }
         />
       )}
     </View>
@@ -94,48 +126,70 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa', padding: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, color: '#1d3557' },
+  container: { flex: 1, backgroundColor: '#f8fafc' },
+  header: { paddingHorizontal: 24, paddingTop: 20, marginBottom: 5 },
+  title: { fontSize: 28, fontWeight: '800', color: '#023e8a' },
+  subtitle: { fontSize: 14, color: '#64748b', marginTop: 4 },
+  
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  
   card: { 
     backgroundColor: '#fff', 
-    padding: 15, 
-    borderRadius: 12, 
-    marginBottom: 15, 
-    elevation: 2, 
+    padding: 20, 
+    borderRadius: 20, 
+    marginBottom: 20, 
+    elevation: 3, 
     shadowColor: '#000', 
-    shadowOpacity: 0.1, 
-    shadowRadius: 4, 
-    shadowOffset: { width: 0, height: 2 } 
+    shadowOpacity: 0.05, 
+    shadowRadius: 10, 
+    shadowOffset: { width: 0, height: 4 } 
   },
   cardHeader: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
-    marginBottom: 10, 
+    marginBottom: 15, 
     alignItems: 'center' 
   },
-  typeText: { fontWeight: 'bold', color: '#457b9d', fontSize: 14 },
-  dateText: { color: '#888', fontSize: 11, fontWeight: '500' },
-  reportText: { color: '#333', marginBottom: 15, lineHeight: 20, fontSize: 15 },
+  authorContainer: { flexDirection: 'row', alignItems: 'center' },
+  dateContainer: { flexDirection: 'row', alignItems: 'center' },
+  typeText: { fontWeight: '700', fontSize: 14 },
+  dateText: { color: '#94a3b8', fontSize: 12, fontWeight: '500' },
   
-  // Nouveau style pour le bouton répondre
+  reportText: { color: '#334155', marginBottom: 20, lineHeight: 22, fontSize: 15 },
+  
   replyBtn: {
-    backgroundColor: '#f0f4f8',
-    padding: 12,
-    borderRadius: 8,
+    flexDirection: 'row',
+    padding: 14,
+    borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#457b9d',
   },
   replyBtnText: {
-    color: '#457b9d',
-    fontWeight: 'bold',
-    fontSize: 14,
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 15,
   },
 
-  footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
-  badgeText: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
-  tokenText: { fontSize: 10, color: '#bbb', fontStyle: 'italic' },
-  empty: { textAlign: 'center', marginTop: 50, color: '#999' }
+  footer: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center',
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9'
+  },
+  badge: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 10, 
+    paddingVertical: 4, 
+    borderRadius: 20 
+  },
+  dot: { width: 6, height: 6, borderRadius: 3, marginRight: 6 },
+  badgeText: { fontSize: 11, fontWeight: '800', textTransform: 'uppercase' },
+  tokenText: { fontSize: 10, color: '#cbd5e1', fontWeight: '600' },
+  
+  emptyContainer: { marginTop: 100, alignItems: 'center' },
+  empty: { color: '#94a3b8', fontSize: 16, fontWeight: '500' }
 });
