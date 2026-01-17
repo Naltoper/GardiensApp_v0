@@ -107,7 +107,7 @@ export default function HomeScreen() {
         <View style={styles.footer}>
           <View style={styles.securityBadge}>
             <Lock size={14} color="#0077b6" />
-            <Text style={styles.footerNote}>Connexion chiffrée & Anonymat garanti</Text>
+            <Text style={styles.footerNote}>Anonymat garanti</Text>
           </View>
           <Text style={styles.lyceeNote}>Lycée des Calanques • Marseille</Text>
         </View>
