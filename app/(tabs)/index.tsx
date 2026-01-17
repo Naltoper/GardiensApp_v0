@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Dimensions, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ShieldAlert, MessageSquare, Info, Phone, Mail, Lock } from 'lucide-react-native'; // Optionnel : installez lucide-react-native
+import { ShieldAlert, MessageSquare, Info, Phone, Mail, Lock } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -19,13 +19,16 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         
-        {/* En-tête avec identité visuelle */}
+        {/* En-tête avec votre logo en rond */}
         <View style={styles.header}>
-          <View style={styles.logoPlaceholder}>
-             {/* Vous pourrez mettre ici le logo du lycée */}
-             <Text style={styles.logoText}>GC</Text>
+          <View style={styles.logoContainer}>
+            <Image 
+              source={require('../../assets/images/logo.png')} 
+              style={styles.logo}
+              resizeMode="cover" // "cover" remplit mieux le cercle
+            />
           </View>
           <Text style={styles.headerTitle}>Les Gardiens des Calanques</Text>
           <View style={styles.divider} />
@@ -34,7 +37,7 @@ export default function HomeScreen() {
           </Text>
         </View>
         
-        {/* Grille de navigation optimisée */}
+        {/* Grille de navigation */}
         <View style={styles.grid}>
           {menuButtons.map((btn, index) => (
             <TouchableOpacity 
@@ -56,7 +59,7 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* Note de réassurance */}
+        {/* Note de réassurance et bas de page */}
         <View style={styles.footer}>
           <View style={styles.securityBadge}>
             <Lock size={14} color="#0077b6" />
@@ -73,7 +76,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f0f9ff', // Bleu très clair (eau cristalline)
+    backgroundColor: '#f0f9ff',
   },
   container: { 
     flexGrow: 1, 
@@ -81,40 +84,52 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 35,
-    paddingTop: 20,
+    marginBottom: 30,
+    paddingTop: 10,
   },
-  logoPlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#0077b6',
+  logoContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60, // Moitié de la largeur pour faire un cercle parfait
+    backgroundColor: '#fff',
+    elevation: 8, // Ombre sur Android
+    shadowColor: '#000', // Ombre sur iOS
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    padding: 3, // Petit espace entre le bord blanc et le logo
+    marginBottom: 15,
+    overflow: 'hidden', // Très important pour que l'image soit coupée en rond
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
-    elevation: 5,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
-  logoText: { color: '#fff', fontWeight: 'bold', fontSize: 20 },
+  logo: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 60,
+  },
   headerTitle: { 
-    fontSize: 26, 
+    fontSize: 24, 
     fontWeight: '800', 
     color: '#023e8a', 
     textAlign: 'center',
     letterSpacing: 0.5
   },
   divider: {
-    width: 50,
-    height: 4,
-    backgroundColor: '#caf0f8',
+    width: 40,
+    height: 3,
+    backgroundColor: '#00b4d8',
     borderRadius: 2,
-    marginVertical: 15,
+    marginVertical: 12,
   },
   subtitle: { 
-    fontSize: 15, 
+    fontSize: 14, 
     color: '#495057', 
     textAlign: 'center', 
-    lineHeight: 22,
-    paddingHorizontal: 15
+    lineHeight: 20,
+    paddingHorizontal: 20
   },
   grid: { 
     flexDirection: 'row',
@@ -123,38 +138,40 @@ const styles = StyleSheet.create({
     gap: 12
   },
   button: { 
-    padding: 20, 
-    borderRadius: 20, 
+    padding: 15, 
+    borderRadius: 18, 
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 4 }, 
+    shadowOffset: { width: 0, height: 3 }, 
     shadowOpacity: 0.1, 
-    shadowRadius: 8,
+    shadowRadius: 5,
     elevation: 3,
   },
   fullWidthButton: {
     width: '100%',
-    paddingVertical: 30,
-    marginBottom: 8,
+    paddingVertical: 25,
+    marginBottom: 5,
   },
   halfWidthButton: {
     width: '48%',
-    height: 120,
+    height: 110,
   },
   smallButton: {
     width: '100%',
-    height: 60,
+    height: 55,
     flexDirection: 'row',
     marginTop: 10,
-    backgroundColor: '#edf2f4',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#dee2e6'
   },
   iconContainer: {
-    marginBottom: 8,
+    marginBottom: 6,
   },
   buttonText: { 
     color: '#fff', 
-    fontSize: 15, 
+    fontSize: 14, 
     fontWeight: '700', 
     textAlign: 'center' 
   },
@@ -164,29 +181,32 @@ const styles = StyleSheet.create({
     marginBottom: 0
   },
   footer: {
-    marginTop: 'auto',
-    paddingVertical: 30,
+    marginTop: 40,
+    paddingBottom: 20,
     alignItems: 'center',
   },
   securityBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e0f2fe',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#caf0f8'
   },
   footerNote: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#0077b6',
     fontWeight: '600',
     marginLeft: 6
   },
   lyceeNote: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#adb5bd',
     textTransform: 'uppercase',
-    letterSpacing: 1
+    letterSpacing: 1,
+    textAlign: 'center'
   }
 });
