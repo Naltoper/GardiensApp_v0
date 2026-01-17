@@ -1,20 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ShieldAlert, MessageSquare, Info, Phone, Mail, Lock } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient'; // Importation pour les dégradés
+import { ShieldAlert, MessageSquare, Info, Phone, Mail, Lock, Shield } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const router = useRouter();
 
-  // Couleurs mixées : Départ Bleu (Mer) -> Arrivée Vert (Calanque)
   const menuButtons = [
     { 
         title: "Fiche de Signalement", 
         route: "/(tabs)/signalement", 
-        // Dégradé distinct : Orange chaleureux vers Turquoise (Accueillant et Solaire)
         colors: ["#48a4f4ff", "#10ac56ff","#48a4f4ff"], 
         icon: <ShieldAlert color="white" size={32} />, 
         fullWidth: true,
@@ -23,38 +21,38 @@ export default function HomeScreen() {
     { 
         title: "Mes signalements", 
         route: "/(tabs)/mes-signalements", 
-        colors: ["#00b4d8", "#76c893"], // Bleu Turquoise -> Vert d'Eau
+        colors: ["#00b4d8", "#76c893"], 
         icon: <MessageSquare color="white" size={24} /> 
     },
     { 
         title: "La Cellule", 
         route: "/(tabs)/cellule", 
-        colors: ["#76c893","#00b4d8"], // Bleu Turquoise -> Vert d'Eau
+        colors: ["#76c893","#00b4d8"], 
         icon: <Info color="white" size={24} /> 
     },
     { 
         title: "Numéros Utiles", 
         route: "/(tabs)/numeros", 
-        colors: ["#48cae4", "#99d98c"], // Bleu Ciel -> Vert Clair
+        colors: ["#48cae4", "#99d98c"], 
         icon: <Phone color="white" size={24} /> 
     },
     { 
         title: "Nous Contacter", 
         route: "/(tabs)/contact", 
-        colors: ["#99d98c","#48cae4"], // Bleu Ciel -> Vert Clair
+        colors: ["#99d98c","#48cae4"], 
         icon: <Mail color="white" size={24} /> 
     },
     { 
         title: "Espace Intervenants", 
         route: "/admin/login", 
-        colors: ["#f1f5f9", "#e2e8f0"], // Gris roche calcaire (neutre)
+        colors: ["#f1f5f9", "#e2e8f0"], 
         icon: <Lock color="#64748b" size={20} />, 
         small: true 
     },
   ];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         
         {/* En-tête avec votre logo en rond */}
@@ -106,21 +104,21 @@ export default function HomeScreen() {
         {/* Pied de page */}
         <View style={styles.footer}>
           <View style={styles.securityBadge}>
-            <Lock size={14} color="#0077b6" />
-            <Text style={styles.footerNote}>Anonymat garanti</Text>
+            <Shield size={14} color="#0077b6" />
+            <Text style={styles.footerNote}> Anonymat garanti</Text>
           </View>
           <Text style={styles.lyceeNote}>Lycée des Calanques • Marseille</Text>
         </View>
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f8fdff', // Un blanc bleuté très frais
+    backgroundColor: 'transparent', // Laisse le layout gérer la couleur
   },
   container: { 
     flexGrow: 1, 
@@ -164,7 +162,7 @@ const styles = StyleSheet.create({
   divider: {
     width: 50,
     height: 4,
-    backgroundColor: '#76c893', // Touche de vert calanque
+    backgroundColor: '#76c893', 
     borderRadius: 2,
     marginVertical: 12,
   },
@@ -222,7 +220,7 @@ const styles = StyleSheet.create({
   smallButtonText: {
     color: '#6c757d',
     marginLeft: 10,
-    marginBottom: 5, // Aligné avec l'icône
+    marginBottom: 5,
     textShadowRadius: 0
   },
   footer: {
@@ -245,7 +243,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#0077b6',
     fontWeight: '600',
-    marginLeft: 8
   },
   lyceeNote: {
     fontSize: 11,
