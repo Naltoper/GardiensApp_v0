@@ -15,7 +15,7 @@ export default function HomeScreen() {
         title: "Fiche de Signalement", 
         route: "/(tabs)/signalement", 
         // Dégradé distinct : Orange chaleureux vers Turquoise (Accueillant et Solaire)
-        colors: ["#fb8500", "#2a9d8f"], 
+        colors: ["#48a4f4ff", "#10ac56ff","#48a4f4ff"], 
         icon: <ShieldAlert color="white" size={32} />, 
         fullWidth: true,
         isPriority: true
@@ -23,13 +23,13 @@ export default function HomeScreen() {
     { 
         title: "Mes signalements", 
         route: "/(tabs)/mes-signalements", 
-        colors: ["#0096c7", "#52b69a"], // Bleu Lagon -> Vert Menthe
+        colors: ["#00b4d8", "#76c893"], // Bleu Turquoise -> Vert d'Eau
         icon: <MessageSquare color="white" size={24} /> 
     },
     { 
         title: "La Cellule", 
         route: "/(tabs)/cellule", 
-        colors: ["#00b4d8", "#76c893"], // Bleu Turquoise -> Vert d'Eau
+        colors: ["#76c893","#00b4d8"], // Bleu Turquoise -> Vert d'Eau
         icon: <Info color="white" size={24} /> 
     },
     { 
@@ -41,7 +41,7 @@ export default function HomeScreen() {
     { 
         title: "Nous Contacter", 
         route: "/(tabs)/contact", 
-        colors: ["#90e0ef", "#b5e48c"], // Eau Cristalline -> Vert Tendre
+        colors: ["#99d98c","#48cae4"], // Bleu Ciel -> Vert Clair
         icon: <Mail color="white" size={24} /> 
     },
     { 
