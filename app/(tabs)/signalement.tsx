@@ -2,6 +2,8 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch, ScrollView
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
+import { LinearGradient } from 'expo-linear-gradient'; // Ajout pour le bouton
+import { ShieldCheck } from 'lucide-react-native'; // Icône cohérente
 
 export default function SignalementScreen() {
   const [isAnonyme, setIsAnonyme] = useState(true);
@@ -18,20 +20,17 @@ export default function SignalementScreen() {
 
     setLoading(true);
 
-    // --- GESTION DU TOKEN UNIQUE ---
     let userToken;
     const TOKEN_KEY = 'user_report_token';
 
     try {
       if (Platform.OS === 'web') {
-        // Version Web : Utilisation du localStorage
         userToken = localStorage.getItem(TOKEN_KEY);
         if (!userToken) {
           userToken = "user_" + Math.random().toString(36).slice(2, 9);
           localStorage.setItem(TOKEN_KEY, userToken);
         }
       } else {
-        // Version Mobile : Utilisation de SecureStore
         userToken = await SecureStore.getItemAsync(TOKEN_KEY);
         if (!userToken) {
           userToken = "user_" + Math.random().toString(36).slice(2, 9);
@@ -39,8 +38,6 @@ export default function SignalementScreen() {
         }
       }
     } catch (e) {
-      console.error("Erreur lors de la gestion du token", e);
-      // Fallback au cas où le stockage échoue
       userToken = "temp_" + Math.random().toString(36).slice(2, 9);
     }
 
@@ -59,8 +56,7 @@ export default function SignalementScreen() {
     setLoading(false);
 
     if (error) {
-      console.error(error);
-      Alert.alert("Erreur", "Impossible d'envoyer le signalement. Vérifie ta connexion.");
+      Alert.alert("Erreur", "Impossible d'envoyer le signalement.");
     } else {
       setIsSent(true); 
       setDesc('');
@@ -68,12 +64,11 @@ export default function SignalementScreen() {
     }
   };
 
-  // --- ÉCRAN DE CONFIRMATION ---
   if (isSent) {
     return (
       <View style={styles.successContainer}>
         <View style={styles.successIcon}>
-          <Text style={{ fontSize: 60 }}>✅</Text>
+          <ShieldCheck size={80} color="#2a9d8f" />
         </View>
         <Text style={styles.successTitle}>Signalement transmis</Text>
         <Text style={styles.successText}>
@@ -86,9 +81,8 @@ export default function SignalementScreen() {
     );
   }
 
-  // --- FORMULAIRE ---
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
       <Text style={styles.title}>Fiche de Signalement</Text>
 
       <View style={styles.switchContainer}>
@@ -99,7 +93,7 @@ export default function SignalementScreen() {
         <Switch 
           value={isAnonyme} 
           onValueChange={setIsAnonyme}
-          trackColor={{ false: "#767577", true: "#2a9d8f" }}
+          trackColor={{ false: "#cbd5e1", true: "#76c893" }}
           thumbColor={isAnonyme ? "#ffffff" : "#f4f3f4"}
         />
       </View>
@@ -110,6 +104,7 @@ export default function SignalementScreen() {
           <TextInput 
             style={styles.inputSmall} 
             placeholder="Nom, Prénom et Classe" 
+            placeholderTextColor="#94a3b8"
             value={nom}
             onChangeText={setNom}
           />
@@ -121,26 +116,33 @@ export default function SignalementScreen() {
         <TextInput
           style={styles.inputLarge}
           multiline
-          placeholder="Raconte-nous ce qu'il se passe de la manière la plus précise possible..."
+          placeholder="Raconte-nous ce qu'il se passe..."
+          placeholderTextColor="#94a3b8"
           value={desc}
           onChangeText={setDesc}
         />
       </View>
 
       <TouchableOpacity 
-        style={[styles.btn, { opacity: loading ? 0.5 : 1 }]} 
+        activeOpacity={0.8}
         onPress={handleSend}
         disabled={loading}
       >
-        <Text style={styles.btnText}>{loading ? "Transmission..." : "Envoyer le signalement"}</Text>
+        <LinearGradient
+          colors={["#48a4f4", "#10ac56"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={[styles.btn, { opacity: loading ? 0.6 : 1 }]}
+        >
+          <Text style={styles.btnText}>{loading ? "Transmission..." : "Envoyer le signalement"}</Text>
+        </LinearGradient>
       </TouchableOpacity>
       
-      {/* Texte dynamique sur la confidentialité */}
       <View style={styles.infoBox}>
         <Text style={styles.infoText}>
           {isAnonyme 
             ? "🛡️ Ce signalement est strictement anonyme. Aucune donnée personnelle n'est enregistrée." 
-            : "👤 Ce signalement est nominatif. Seuls les intervenants autorisés de la cellule pourront consulter ton nom."}
+            : "👤 Ce signalement est nominatif. Seuls les intervenants autorisés pourront consulter ton nom."}
         </Text>
       </View>
     </ScrollView>
@@ -148,24 +150,74 @@ export default function SignalementScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 26, fontWeight: 'bold', marginBottom: 25, color: '#e63946' },
-  switchContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 18, backgroundColor: '#f0f4f8', borderRadius: 12, marginBottom: 25 },
+  container: { flex: 1, padding: 24, backgroundColor: 'transparent' },
+  title: { fontSize: 28, fontWeight: '800', marginBottom: 25, color: '#023e8a' },
+  
+  switchContainer: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    padding: 20, 
+    backgroundColor: '#fff', 
+    borderRadius: 20, 
+    marginBottom: 25,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 15,
+  },
+  
   section: { marginBottom: 25 },
-  label: { fontSize: 16, fontWeight: '700', color: '#1d3557' },
-  subLabel: { fontSize: 12, color: '#666', marginTop: 2 },
-  inputSmall: { borderWidth: 1.5, borderColor: '#e1e8ed', borderRadius: 10, padding: 15, marginTop: 10, fontSize: 16, backgroundColor: '#fdfdfd' },
-  inputLarge: { borderWidth: 1.5, borderColor: '#e1e8ed', borderRadius: 10, padding: 15, height: 150, textAlignVertical: 'top', marginTop: 10, fontSize: 16, backgroundColor: '#fdfdfd' },
-  btn: { backgroundColor: '#e63946', padding: 20, borderRadius: 12, alignItems: 'center', shadowColor: '#e63946', shadowOpacity: 0.3, shadowRadius: 5, shadowOffset: { width: 0, height: 4 }, elevation: 5 },
+  label: { fontSize: 16, fontWeight: '700', color: '#1e293b', marginBottom: 8 },
+  subLabel: { fontSize: 13, color: '#64748b', marginTop: 2 },
+  
+  inputSmall: { 
+    borderWidth: 1, 
+    borderColor: '#e2e8f0', 
+    borderRadius: 15, 
+    padding: 15, 
+    fontSize: 16, 
+    backgroundColor: '#fff',
+    color: '#1e293b'
+  },
+  inputLarge: { 
+    borderWidth: 1, 
+    borderColor: '#e2e8f0', 
+    borderRadius: 15, 
+    padding: 15, 
+    height: 150, 
+    textAlignVertical: 'top', 
+    fontSize: 16, 
+    backgroundColor: '#fff',
+    color: '#1e293b'
+  },
+  
+  btn: { 
+    padding: 20, 
+    borderRadius: 15, 
+    alignItems: 'center',
+    shadowColor: '#10ac56',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 4
+  },
   btnText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
   
-  infoBox: { marginTop: 25, padding: 15, backgroundColor: '#f8f9fa', borderRadius: 10, borderLeftWidth: 4, borderLeftColor: '#457b9d' },
-  infoText: { color: '#457b9d', fontSize: 13, lineHeight: 18, fontStyle: 'italic', textAlign: 'center' },
+  infoBox: { 
+    marginTop: 30, 
+    padding: 15, 
+    backgroundColor: '#f1f5f9', 
+    borderRadius: 15,
+    borderLeftWidth: 4, 
+    borderLeftColor: '#00b4d8' 
+  },
+  infoText: { color: '#475569', fontSize: 13, lineHeight: 20, textAlign: 'center' },
   
   successContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 35, backgroundColor: '#fff' },
-  successIcon: { marginBottom: 25 },
-  successTitle: { fontSize: 28, fontWeight: 'bold', color: '#2a9d8f', marginBottom: 15, textAlign: 'center' },
-  successText: { fontSize: 17, color: '#444', textAlign: 'center', marginBottom: 40, lineHeight: 24 },
-  btnSecondary: { paddingVertical: 10, borderBottomWidth: 1.5, borderBottomColor: '#999' },
-  btnSecondaryText: { color: '#666', fontWeight: '700', fontSize: 16 }
+  successIcon: { marginBottom: 20 },
+  successTitle: { fontSize: 26, fontWeight: '800', color: '#023e8a', marginBottom: 15, textAlign: 'center' },
+  successText: { fontSize: 16, color: '#64748b', textAlign: 'center', marginBottom: 40, lineHeight: 24 },
+  btnSecondary: { paddingVertical: 10 },
+  btnSecondaryText: { color: '#00b4d8', fontWeight: '700', fontSize: 16 }
 });
