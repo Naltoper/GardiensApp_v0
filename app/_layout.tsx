@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 
 export default function RootLayout() {
-  const bgColor = '#bfdbdac3'; // Définis ta couleur ici une seule fois
+  const bgColor = '#cbe7e6c3'; // Définis ta couleur ici une seule fois
 
   return (
     <SafeAreaProvider>

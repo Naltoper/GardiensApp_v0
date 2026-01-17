@@ -1,8 +1,10 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Lock, Mail, ChevronLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+
+const { height } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -19,72 +21,79 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      // Sur Android 'padding' fonctionne souvent mieux avec un ScrollView pour forcer la remontée
+      behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+      // On augmente l'offset pour compenser la barre de chiffres/suggestions
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}
       style={styles.container}
     >
-      {/* Bouton Retour */}
-      <TouchableOpacity 
-        style={styles.backButton} 
-        onPress={() => router.back()}
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ChevronLeft size={24} color="#64748b" />
-        <Text style={styles.backText}>Retour</Text>
-      </TouchableOpacity>
-
-      <View style={styles.content}>
-        <View style={styles.iconHeader}>
-          <Lock size={40} color="#023e8a" />
-        </View>
-        
-        <Text style={styles.title}>Espace Intervenants</Text>
-        <Text style={styles.subtitle}>
-          Connectez-vous pour accéder à la cellule de veille et gérer les signalements.
-        </Text>
-
-        <View style={styles.inputContainer}>
-          <Mail size={20} color="#94a3b8" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#94a3b8"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-        </View>
-        
-        <View style={styles.inputContainer}>
-          <Lock size={20} color="#94a3b8" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Mot de passe"
-            placeholderTextColor="#94a3b8"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-        </View>
-
+        {/* Bouton Retour */}
         <TouchableOpacity 
-          activeOpacity={0.8} 
-          onPress={handleLogin}
-          style={styles.loginBtnContainer}
+          style={styles.backButton} 
+          onPress={() => router.back()}
         >
-          <LinearGradient
-            colors={["#023e8a", "#0077b6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.loginBtn}
-          >
-            <Text style={styles.loginBtnText}>Se connecter</Text>
-          </LinearGradient>
+          <ChevronLeft size={24} color="#64748b" />
+          <Text style={styles.backText}>Retour</Text>
         </TouchableOpacity>
 
-        <Text style={styles.footerNote}>
-          Accès réservé au personnel autorisé du Lycée des Calanques.
-        </Text>
-      </View>
+        <View style={styles.innerContainer}>
+          <View style={styles.iconHeader}>
+            <Lock size={40} color="#023e8a" />
+          </View>
+          
+          <Text style={styles.title}>Espace Intervenants</Text>
+          <Text style={styles.subtitle}>
+            Connectez-vous pour accéder à la cellule de veille.
+          </Text>
+
+          <View style={styles.inputContainer}>
+            <Mail size={20} color="#94a3b8" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email professionnel"
+              placeholderTextColor="#94a3b8"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          </View>
+          
+          <View style={styles.inputContainer}>
+            <Lock size={20} color="#94a3b8" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Mot de passe"
+              placeholderTextColor="#94a3b8"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
+
+          <TouchableOpacity 
+            activeOpacity={0.8} 
+            onPress={handleLogin}
+            style={styles.loginBtnContainer}
+          >
+            <LinearGradient
+              colors={["#023e8a", "#0077b6"]}
+              style={styles.loginBtn}
+            >
+              <Text style={styles.loginBtnText}>Se connecter</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <Text style={styles.footerNote}>
+            Accès réservé au personnel autorisé.
+          </Text>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -92,13 +101,19 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#f8fafc',
+    backgroundColor: 'transparent',
+  },
+  scrollContent: {
+    flexGrow: 1, // Important pour que le ScrollView prenne toute la place
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 60 : 50,
+    paddingHorizontal: 24,
+    position: 'absolute', // On le sort du flux pour qu'il ne bouge pas trop
+    top: 0,
+    zIndex: 10,
   },
   backText: {
     color: '#64748b',
@@ -106,17 +121,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
   },
-  content: { 
-    flex: 1, 
+  innerContainer: { 
+    flex: 1,
     paddingHorizontal: 30, 
     justifyContent: 'center',
-    marginTop: -50 // Centre légèrement vers le haut
+    paddingTop: 100, // On laisse de la place pour le bouton retour
+    paddingBottom: 50, // Espace de sécurité en bas pour que le bouton remonte bien
   },
   iconHeader: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     backgroundColor: '#fff',
-    borderRadius: 40,
+    borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -126,20 +142,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
   },
-  title: { 
-    fontSize: 26, 
-    fontWeight: '800', 
-    color: '#023e8a', 
-    textAlign: 'center' 
-  },
+  title: { fontSize: 24, fontWeight: '800', color: '#023e8a', textAlign: 'center' },
   subtitle: { 
     fontSize: 14, 
     color: '#64748b', 
     textAlign: 'center', 
-    marginBottom: 40, 
-    marginTop: 10,
-    lineHeight: 20,
-    paddingHorizontal: 10
+    marginBottom: 30, 
+    marginTop: 8,
+    lineHeight: 20 
   },
   inputContainer: {
     flexDirection: 'row',
@@ -151,40 +161,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 15,
   },
-  inputIcon: {
-    marginRight: 12,
-  },
-  input: { 
-    flex: 1,
-    paddingVertical: 15, 
-    fontSize: 16, 
-    color: '#1e293b' 
-  },
+  inputIcon: { marginRight: 12 },
+  input: { flex: 1, paddingVertical: 14, fontSize: 16, color: '#1e293b' },
   loginBtnContainer: {
     marginTop: 10,
     borderRadius: 16,
     overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#023e8a',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
   },
-  loginBtn: { 
-    padding: 18, 
-    alignItems: 'center' 
-  },
-  loginBtnText: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    fontSize: 16,
-    letterSpacing: 0.5
-  },
+  loginBtn: { padding: 18, alignItems: 'center' },
+  loginBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   footerNote: {
-    marginTop: 30,
-    fontSize: 12,
+    marginTop: 20,
+    fontSize: 11,
     color: '#94a3b8',
     textAlign: 'center',
-    fontStyle: 'italic'
   }
 });
