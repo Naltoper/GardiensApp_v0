@@ -67,9 +67,10 @@ export default function HomeScreen() {
           <Text style={styles.headerTitle}>Les Gardiens des Calanques</Text>
           <View style={styles.divider} />
           <Text style={styles.subtitle}>
-            Un espace sécurisé et bienveillant pour briser le silence. Votre anonymat est notre priorité.
+            {"Un espace sécurisé et bienveillant pour briser le silence et lutter contre le harcélement scolaire.\n\n Votre anonymat est notre priorité."}
           </Text>
         </View>
+        
         
         {/* Grille de navigation avec Gradients */}
         <View style={styles.grid}>
@@ -130,9 +131,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   logoContainer: {
-    width: 110,
-    height: 110,
-    borderRadius: 55,
+    width: 170,
+    height: 200,
+    borderRadius: 60,
     backgroundColor: '#fff',
     elevation: 10,
     shadowColor: '#0077b6',
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: '#48a4f4ff',
   },
   logo: {
     width: '100%',
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 55,
   },
   headerTitle: { 
-    fontSize: 24, 
+    fontSize: 34, 
     fontWeight: '800', 
     color: '#023e8a', 
     textAlign: 'center',
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   subtitle: { 
-    fontSize: 14, 
+    fontSize: 20, 
     color: '#52718e', 
     textAlign: 'center', 
     lineHeight: 20,
@@ -177,7 +178,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 12
+    gap: 12,
+    paddingTop: 50,
   },
   fullWidthContainer: {
     width: '100%',
@@ -188,9 +190,10 @@ const styles = StyleSheet.create({
     height: 110,
   },
   smallContainer: {
-    width: '100%',
-    height: 55,
-    marginTop: 10,
+    width: '100%',        // On garde 100% de la largeur parente
+    height: 60,
+    marginTop: 15,
+    alignItems: 'center'
   },
   gradientButton: {
     flex: 1,
@@ -221,7 +224,8 @@ const styles = StyleSheet.create({
     color: '#6c757d',
     marginLeft: 10,
     marginBottom: 5,
-    textShadowRadius: 0
+    textShadowRadius: 0,
+    fontSize: 15,
   },
   footer: {
     marginTop: 40,
@@ -240,7 +244,7 @@ const styles = StyleSheet.create({
     borderColor: '#caf0f8',
   },
   footerNote: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#0077b6',
     fontWeight: '600',
   },

@@ -11,7 +11,7 @@ export default function CelluleScreen() {
       <Text style={styles.subtitle}>Nos engagements :</Text>
       <Text style={styles.item}>• Anonymat total des élèves.</Text>
       <Text style={styles.item}>• Réponse rapide des intervenants.</Text>
-      <Text style={styles.item}>• Soutien psychologique et médiation.</Text>
+      <Text style={styles.item}>• Soutien psychologique.</Text>
     </ScrollView>
   );
 }
