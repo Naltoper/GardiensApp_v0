@@ -123,6 +123,13 @@ export default function SignalementScreen() {
         />
       </View>
 
+      {/* Bloc d'avertissement pénal */}
+      <View style={styles.warningBox}>
+        <Text style={styles.warningText}>
+          Afin de garantir la protection de tous, rappelle-toi que le signalement de faits volontairement inexacts est sanctionné par la loi (Art. 226-10 du Code pénal).
+        </Text>
+      </View>
+
       <TouchableOpacity 
         activeOpacity={0.8}
         onPress={handleSend}
@@ -219,5 +226,26 @@ const styles = StyleSheet.create({
   successTitle: { fontSize: 26, fontWeight: '800', color: '#023e8a', marginBottom: 15, textAlign: 'center' },
   successText: { fontSize: 16, color: '#64748b', textAlign: 'center', marginBottom: 40, lineHeight: 24 },
   btnSecondary: { paddingVertical: 10 },
-  btnSecondaryText: { color: '#00b4d8', fontWeight: '700', fontSize: 16 }
+  btnSecondaryText: { color: '#00b4d8', fontWeight: '700', fontSize: 16 },
+  warningBox: {
+    marginTop: 20,
+    marginBottom: 20,
+    padding: 15,
+    backgroundColor: '#f8fafc', // Bleu-gris très léger et pro
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#cbd5e1', // Bordure douce
+    borderLeftWidth: 5,
+    borderLeftColor: '#cf7820ff', // Barre latérale pour souligner l'importance
+  },
+  warningText: {
+    color: '#475569', // Gris ardoise (sérieux mais pas agressif)
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: 'left', // Alignement à gauche pour faire plus "officiel"
+  },
+  warningBold: {
+    fontWeight: '700',
+    color: '#1e293b', // Un peu plus foncé pour l'emphase
+  },
 });
