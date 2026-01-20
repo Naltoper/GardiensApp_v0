@@ -68,7 +68,7 @@ export default function DashboardScreen() {
         
         <TouchableOpacity 
           activeOpacity={0.8}
-          onPress={() => router.push(`/admin/chat/${item.id}`)}
+          onPress={() => router.push(`../chat/${item.id}`)}
         >
           <LinearGradient
             colors={["#48a4f4", "#00b4d8"]}
