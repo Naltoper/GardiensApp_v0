@@ -18,7 +18,7 @@ export default function RootLayout() {
             headerTitleStyle: { fontWeight: '800', fontSize: 18 },
             headerShadowVisible: false,
             
-            // C'EST CETTE LIGNE QU'IL FAUT CHANGER :
+            
             contentStyle: { backgroundColor: bgColor }, 
           }}
         >
