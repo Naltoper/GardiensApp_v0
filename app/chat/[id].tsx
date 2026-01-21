@@ -5,14 +5,16 @@ import { supabase } from '../../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Send, ChevronLeft, ShieldCheck, Lock } from 'lucide-react-native';
 
+// IMPORT DE TON NOUVEAU COMPOSANT
+import PreviewRibbon from '../../components/PreviewRibbon'; 
+
 export default function ChatScreen() {
-  const { id, role } = useLocalSearchParams(); // On récupère 'role' depuis l'URL
+  const { id, role } = useLocalSearchParams();
   const router = useRouter();
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // On détermine si c'est l'élève basé sur le paramètre de navigation
   const isUserAuthor = role === 'user';
 
   const fetchMessages = useCallback(async () => {
@@ -79,7 +81,6 @@ export default function ChatScreen() {
           
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle} numberOfLines={1}>
-              {/* Le titre dépend directement du paramètre 'role' */}
               {isUserAuthor ? "Échange avec un intervenant" : "Échange avec un élève"}
             </Text>
             <View style={styles.idBadge}>
@@ -97,14 +98,12 @@ export default function ChatScreen() {
       <KeyboardAvoidingView 
         style={styles.content} 
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <FlatList
           data={messages}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => {
-            // Logique visuelle : mes messages à droite, les autres à gauche
             const isMyMessage = isUserAuthor 
               ? item.sender_role === 'user' 
               : item.sender_role === 'admin';
@@ -132,6 +131,9 @@ export default function ChatScreen() {
             );
           }}
         />
+
+        {/* UTILISATION DU COMPOSANT RÉUTILISABLE ICI */}
+        <PreviewRibbon />
 
         <View style={styles.inputWrapper}>
           <View style={styles.inputContainer}>

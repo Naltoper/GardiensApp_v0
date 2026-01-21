@@ -2,6 +2,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native
 import { useRouter } from 'expo-router';
 import { ChevronLeft, MessagesSquare } from 'lucide-react-native';
 
+// IMPORT DU COMPOSANT RÉUTILISABLE
+import PreviewRibbon from '../../components/PreviewRibbon'; 
+
 export default function ContactScreen() {
   const router = useRouter();
 
@@ -30,9 +33,8 @@ export default function ContactScreen() {
           {"L'interface de chat sera disponible ici bientôt pour poser vos questions en direct et en toute confidentialité."}
         </Text>
         
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>Bientôt disponible</Text>
-        </View>
+        {/* UTILISATION DU COMPOSANT (Il se centre automatiquement par défaut) */}
+        <PreviewRibbon position="top"/>
       </View>
     </View>
   );
@@ -100,17 +102,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 30
-  },
-  badge: {
-    backgroundColor: '#e0f2fe',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  badgeText: {
-    color: '#00b4d8',
-    fontWeight: '700',
-    fontSize: 14,
-    textTransform: 'uppercase',
   }
 });
