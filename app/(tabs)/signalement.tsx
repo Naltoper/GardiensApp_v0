@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { LinearGradient } from 'expo-linear-gradient'; // Ajout pour le bouton
 import { ShieldCheck, ChevronLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router'; // Import du router pour l'action de retour
+import DemoRibbon from '@/components/DemoRibbon';
 
 export default function SignalementScreen() {
   const router = useRouter();
@@ -95,6 +96,8 @@ export default function SignalementScreen() {
         </TouchableOpacity>
         <Text style={styles.title}>Fiche de Signalement</Text>
       </View>
+
+      <DemoRibbon isFloating={false} />
 
       <View style={styles.switchContainer}>
         <View style={{ flex: 1 }}>

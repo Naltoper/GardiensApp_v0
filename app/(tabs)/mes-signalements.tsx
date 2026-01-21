@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
 import { MessageCircle, ChevronLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import DemoRibbon from '@/components/DemoRibbon';
 
 export default function MesSignalementsScreen() {
   const router = useRouter();
@@ -124,6 +125,8 @@ export default function MesSignalementsScreen() {
         {/* View vide pour équilibrer le centrage du texte face au bouton retour */}
         <View style={styles.placeholder} />
       </View>
+
+      <DemoRibbon isFloating={false} />
       
       <FlatList
         data={reports}

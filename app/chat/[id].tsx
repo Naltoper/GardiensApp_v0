@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Send, ChevronLeft, ShieldCheck, Lock } from 'lucide-react-native';
 import PreviewRibbon from '../../components/PreviewRibbon'; 
+import DemoRibbon from '@/components/DemoRibbon';
 
 export default function ChatScreen() {
   const { id, role } = useLocalSearchParams();
@@ -92,6 +93,7 @@ export default function ChatScreen() {
           </View>
         </View>
       </LinearGradient>
+      <DemoRibbon isFloating={false} />
 
       <KeyboardAvoidingView 
         style={styles.content} 

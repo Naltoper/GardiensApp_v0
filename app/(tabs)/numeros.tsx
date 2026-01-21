@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Linking, TouchableOpacity, ScrollView, Platform
 import { Phone, ShieldCheck, ChevronLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router'; // Import du router
+import DemoRibbon from '@/components/DemoRibbon';
 
 export default function NumerosScreen() {
   const router = useRouter(); // Initialisation du router
@@ -41,6 +42,8 @@ export default function NumerosScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Numéros Utiles</Text>
       </View>
+
+      <DemoRibbon isFloating={false} />
 
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.subtitle}>

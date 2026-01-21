@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
 import { MessageCircle, Clock, User, Shield, ChevronLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import DemoRibbon from '@/components/DemoRibbon';
 
 export default function DashboardScreen() {
   const [reports, setReports] = useState<any[]>([]);
@@ -111,6 +112,8 @@ export default function DashboardScreen() {
           <Text style={styles.subtitle}>{reports.length} signalement(s) au total</Text>
         </View>
       </View>
+
+      <DemoRibbon isFloating={false} />
       
       {loading && !refreshing ? (
         <View style={styles.loaderContainer}>

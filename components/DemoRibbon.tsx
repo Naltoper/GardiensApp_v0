@@ -13,7 +13,7 @@ export default function DemoRibbon({ isFloating = false }: DemoRibbonProps) {
   const showExplanation = () => {
     Alert.alert(
       "Version de démonstration",
-      "Ceci est un prototype de l'application Gardiens Des Calanques. \n\nCertaines fonctionnalités ne sont pas encore implémentées ou partielement. \n\nCe prototype permet d'explorer un apperçu de l'application finale.",
+      "Ceci est un prototype de l'application Gardiens Des Calanques. \n\nCertaines fonctionnalités ne sont pas encore implémentées ou sont incomplete. \n\nCe prototype permet d'explorer un apperçu de l'application finale.",
       [{ text: "J'ai compris", style: "default" }]
     );
   };
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     // Couleur orange/rouge vive avec transparence (0.8)
-    backgroundColor: 'rgba(249, 82, 16, 0.8)', 
+    backgroundColor: 'rgba(249, 82, 16, 0.76)', 
     paddingHorizontal: 25,
     paddingVertical: 12,
     borderRadius: 20,
@@ -58,17 +58,10 @@ const styles = StyleSheet.create({
     // Bordure fine
     borderWidth: 1.5,
     borderColor: 'rgba(255, 255, 255, 0.3)',
-
-    // Ombres
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
   },
   text: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '900',
     marginLeft: 10,
     letterSpacing: 1.5,

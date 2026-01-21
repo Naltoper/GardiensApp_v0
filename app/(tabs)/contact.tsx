@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, MessagesSquare } from 'lucide-react-native';
+import DemoRibbon from '@/components/DemoRibbon';
 
 // IMPORT DU COMPOSANT RÉUTILISABLE
 import PreviewRibbon from '../../components/PreviewRibbon'; 
@@ -21,6 +22,8 @@ export default function ContactScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Discussion</Text>
       </View>
+
+      <DemoRibbon isFloating={false} />
 
       {/* CONTENU CENTRAL (MESSAGE D'ATTENTE) */}
       <View style={styles.content}>

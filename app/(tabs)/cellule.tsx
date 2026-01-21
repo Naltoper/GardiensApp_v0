@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Info, ShieldCheck, Zap, Heart, Shield, ChevronLeft, ExternalLink } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import DemoRibbon from '@/components/DemoRibbon';
 
 const { width, height } = Dimensions.get('window');
 
@@ -61,6 +62,9 @@ export default function CelluleScreen() {
                 </View>
 
                 <View style={styles.divider} />
+
+                <DemoRibbon isFloating={false} />
+                
                 <View style={styles.subtitleContainer}>
                    <Text style={styles.subtitle}>
                     {"Les Gardiens des Calanques est une unité dédiée à votre protection et à votre écoute."}

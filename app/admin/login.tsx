@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Lock, Mail, ChevronLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import DemoRibbon from '@/components/DemoRibbon';
 
 const { height } = Dimensions.get('window');
 
@@ -50,6 +51,8 @@ export default function LoginScreen() {
           <Text style={styles.subtitle}>
             Connectez-vous pour accéder à la cellule de veille.
           </Text>
+
+          <DemoRibbon isFloating={false} />
 
           <View style={styles.inputContainer}>
             <Mail size={20} color="#94a3b8" style={styles.inputIcon} />
