@@ -1,9 +1,9 @@
 import React from 'react';
-import { ScrollView, Text, StyleSheet, View, Dimensions, ImageBackground, Image, TouchableOpacity, Platform } from 'react-native';
+import { ScrollView, Text, StyleSheet, View, Dimensions, ImageBackground, Image, TouchableOpacity, Platform, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Info, ShieldCheck, Zap, Heart, Shield, ChevronLeft } from 'lucide-react-native';
-import { useRouter } from 'expo-router'; // Import pour la navigation
+import { Info, ShieldCheck, Zap, Heart, Shield, ChevronLeft, ExternalLink } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,7 +15,12 @@ interface EngagementProps {
 }
 
 export default function CelluleScreen() {
-  const router = useRouter(); // Initialisation du router
+  const router = useRouter();
+
+  // Fonction pour ouvrir le lien web
+  const openWebLink = () => {
+    Linking.openURL('https://view.genially.com/6745954c37cfac416f351af9');
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -95,6 +100,23 @@ export default function CelluleScreen() {
                 />
               </View>
 
+              {/* NOUVEAU BOUTON LIEN WEB EXTERNE */}
+              <TouchableOpacity 
+                style={styles.webLinkButton} 
+                onPress={openWebLink}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={["#f8fafc", "#f1f5f9"]}
+                  style={styles.webLinkGradient}
+                >
+                  <View style={styles.webLinkContent}>
+                    <Text style={styles.webLinkText}>Voir le contenu Genially des Gardiens Des Calanques</Text>
+                    <ExternalLink size={18} color="#023e8a" />
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+
               {/* Pied de page */}
               <View style={styles.footer}>
                 <View style={styles.securityBadge}>
@@ -134,13 +156,12 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
-  // NOUVEAU STYLE POUR LA FLÈCHE
   backButton: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40, // S'adapte à l'encoche
+    top: Platform.OS === 'ios' ? 60 : 40,
     left: 20,
     zIndex: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fond léger pour lisibilité sur l'image
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     padding: 8,
     borderRadius: 15,
     elevation: 5,
@@ -289,6 +310,34 @@ const styles = StyleSheet.create({
   itemContent: { flex: 1 },
   itemTitle: { fontSize: 17, fontWeight: '800', color: '#1e293b' },
   itemDesc: { fontSize: 14, color: '#475569', marginTop: 3, lineHeight: 18, fontWeight: '500' },
+  
+  // STYLES DU NOUVEAU BOUTON WEB
+  webLinkButton: {
+    marginTop: 30,
+    borderRadius: 20,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  webLinkGradient: {
+    padding: 18,
+  },
+  webLinkContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  webLinkText: {
+    fontSize: 14,
+    color: '#023e8a',
+    fontWeight: '700',
+    flex: 1,
+    marginRight: 10,
+  },
+
   footer: { 
     marginTop: 50, 
     alignItems: 'center' 
