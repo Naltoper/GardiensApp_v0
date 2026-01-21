@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "GardiensApp_v0",
-    "slug": "GardiensApp_v0",
+    "name": "Gardiens Des Calanques",
+    "slug": "Gardiens-Des-Calanques",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "gardiensappv0",
+    "scheme": "gardiensdescalanques",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
