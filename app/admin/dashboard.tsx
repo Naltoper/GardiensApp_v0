@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, TouchableOpacity, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
-import { MessageCircle, Clock, User, Shield } from 'lucide-react-native';
+import { MessageCircle, Clock, User, Shield, ChevronLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function DashboardScreen() {
@@ -69,14 +69,12 @@ export default function DashboardScreen() {
         <TouchableOpacity 
           activeOpacity={0.8}
           onPress={() => router.push({
-          pathname: `../chat/${item.id}`,
-          params: { role: 'admin' } // On précise que c'est l'admin
+            pathname: `../chat/${item.id}`,
+            params: { role: 'admin' }
           })}
         >
           <LinearGradient
             colors={["#48a4f4", "#00b4d8"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
             style={styles.replyBtn}
           >
             <MessageCircle size={18} color="white" style={{ marginRight: 8 }} />
@@ -99,9 +97,19 @@ export default function DashboardScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Espace Intervenants</Text>
-        <Text style={styles.subtitle}>{reports.length} signalement(s) au total</Text>
+      {/* HEADER AVEC TITRE CENTRÉ ET BOUTON RETOUR */}
+      <View style={styles.headerContainer}>
+        <TouchableOpacity 
+          onPress={() => router.back()} 
+          style={styles.backButton}
+        >
+          <ChevronLeft color="#023e8a" size={30} strokeWidth={2.5} />
+        </TouchableOpacity>
+        
+        <View style={styles.titleWrapper}>
+          <Text style={styles.title}>Espace Intervenants</Text>
+          <Text style={styles.subtitle}>{reports.length} signalement(s) au total</Text>
+        </View>
       </View>
       
       {loading && !refreshing ? (
@@ -129,17 +137,49 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
-  header: { paddingHorizontal: 24, paddingTop: 20, marginBottom: 5 },
-  title: { fontSize: 28, fontWeight: '800', color: '#023e8a' },
-  subtitle: { fontSize: 14, color: '#64748b', marginTop: 4 },
+  container: { flex: 1, backgroundColor: '#f8fafc' },
+  
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+    position: 'relative',
+  },
+  backButton: {
+    position: 'absolute',
+    left: 15,
+    top: Platform.OS === 'ios' ? 55 : 35,
+    padding: 10,
+    zIndex: 10,
+  },
+  titleWrapper: {
+    alignItems: 'center',
+  },
+  title: { 
+    fontSize: 22, 
+    fontWeight: '800', 
+    color: '#023e8a',
+    textAlign: 'center' 
+  },
+  subtitle: { 
+    fontSize: 12, 
+    color: '#64748b', 
+    fontWeight: '600',
+    marginTop: 2 
+  },
   
   loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   
   card: { 
     backgroundColor: '#fff', 
     padding: 20, 
-    borderRadius: 20, 
+    borderRadius: 24, 
     marginBottom: 20, 
     elevation: 3, 
     shadowColor: '#000', 
@@ -163,7 +203,7 @@ const styles = StyleSheet.create({
   replyBtn: {
     flexDirection: 'row',
     padding: 14,
-    borderRadius: 12,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 15,
@@ -178,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center',
-    paddingTop: 10,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#f1f5f9'
   },

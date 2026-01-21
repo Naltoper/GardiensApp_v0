@@ -1,8 +1,9 @@
 import React from 'react';
-import { ScrollView, Text, StyleSheet, View, Dimensions, ImageBackground, Image } from 'react-native';
+import { ScrollView, Text, StyleSheet, View, Dimensions, ImageBackground, Image, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Info, ShieldCheck, Zap, Heart, Shield } from 'lucide-react-native';
+import { Info, ShieldCheck, Zap, Heart, Shield, ChevronLeft } from 'lucide-react-native';
+import { useRouter } from 'expo-router'; // Import pour la navigation
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,6 +15,8 @@ interface EngagementProps {
 }
 
 export default function CelluleScreen() {
+  const router = useRouter(); // Initialisation du router
+
   return (
     <View style={styles.mainContainer}>
       <ImageBackground 
@@ -25,6 +28,15 @@ export default function CelluleScreen() {
           colors={['rgba(255, 255, 255, 0.1)', 'rgba(248, 250, 252, 0.4)']}
           style={styles.overlay}
         >
+          {/* BOUTON RETOUR POSITIONNÉ EN ABSOLU */}
+          <TouchableOpacity 
+            onPress={() => router.back()} 
+            style={styles.backButton}
+            activeOpacity={0.7}
+          >
+            <ChevronLeft color="#023e8a" size={30} strokeWidth={2.5} />
+          </TouchableOpacity>
+
           <SafeAreaView style={styles.safeArea}>
             <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
               
@@ -35,12 +47,11 @@ export default function CelluleScreen() {
                 </View>
                 <Text style={[styles.headerTitle, styles.textShadow]}>La Cellule</Text>
                 
-                {/* IMAGE PORTRAIT NON ROGNÉE */}
                 <View style={styles.portraitContainer}>
                   <Image 
                     source={require('../../assets/images/portraitCellule.png')} 
                     style={styles.portraitImage}
-                    resizeMode="contain" // Changé ici : l'image entière est visible
+                    resizeMode="contain"
                   />
                 </View>
 
@@ -79,7 +90,7 @@ export default function CelluleScreen() {
                 <EngagementItem 
                   icon={<Heart color="white" size={24} />} 
                   title="Soutien bienveillant" 
-                  desc="Une équipe à ton écoute pour t'accompagner sans jugement."
+                  desc="Une équipe à ton écoute pour t'accompagnement sans jugement."
                   colors={["#76c893", "#52b69a"]} 
                 />
               </View>
@@ -123,6 +134,21 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
+  // NOUVEAU STYLE POUR LA FLÈCHE
+  backButton: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 40, // S'adapte à l'encoche
+    left: 20,
+    zIndex: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fond léger pour lisibilité sur l'image
+    padding: 8,
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
   backgroundImage: {
     flex: 1,
     width: width,
@@ -164,10 +190,10 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   portraitContainer: {
-    width: width * 0.7, // Élargi un peu pour donner de l'espace à l'image entière
+    width: width * 0.7, 
     height: width * 0.9, 
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)', // Fond léger si l'image ne remplit pas tout le cadre
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     overflow: 'hidden',
     borderWidth: 3,
     borderColor: '#FFFFFF',
@@ -181,7 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   portraitImage: {
-    width: '95%', // On laisse une petite marge interne pour éviter de toucher les bords
+    width: '95%',
     height: '95%',
   },
   textShadow: {

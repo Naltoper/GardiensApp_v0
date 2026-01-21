@@ -2,11 +2,11 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, Platform, Touchabl
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
-import { MessageCircle } from 'lucide-react-native';
-import { useRouter } from 'expo-router'; // 1. Import du router
+import { MessageCircle, ChevronLeft } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 export default function MesSignalementsScreen() {
-  const router = useRouter(); // 2. Initialisation du router
+  const router = useRouter();
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -68,11 +68,10 @@ export default function MesSignalementsScreen() {
       <TouchableOpacity 
         activeOpacity={0.8} 
         style={[styles.card, { borderLeftColor: statusColor }]}
-        // 3. Navigation vers le chat au clic sur la carte
         onPress={() => router.push({
-        pathname: `../chat/${item.id}`,
-        params: { role: 'user' } // On précise que c'est l'utilisateur qui ouvre
-      })}
+          pathname: `../chat/${item.id}`,
+          params: { role: 'user' }
+        })}
       >
         <View style={styles.cardHeader}>
           <Text style={styles.date}>
@@ -111,7 +110,20 @@ export default function MesSignalementsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mes signalements</Text>
+      {/* HEADER CENTRÉ AVEC BOUTON RETOUR */}
+      <View style={styles.headerContainer}>
+        <TouchableOpacity 
+          onPress={() => router.back()} 
+          style={styles.backButton}
+        >
+          <ChevronLeft color="#023e8a" size={28} strokeWidth={2.5} />
+        </TouchableOpacity>
+        
+        <Text style={styles.title}>Mes signalements</Text>
+        
+        {/* View vide pour équilibrer le centrage du texte face au bouton retour */}
+        <View style={styles.placeholder} />
+      </View>
       
       <FlatList
         data={reports}
@@ -135,20 +147,35 @@ export default function MesSignalementsScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: 'transparent' 
+    backgroundColor: '#f8fafc' // Un fond très léger pour faire ressortir les cartes blanches
   },
   loaderContainer: { 
     flex: 1, 
     justifyContent: 'center', 
     alignItems: 'center' 
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20, // Ajustement pour l'encoche iOS
+    paddingBottom: 20,
+    backgroundColor: 'transparent',
+  },
+  backButton: {
+    padding: 8,
+    width: 44, // Taille fixe pour aider au centrage
+  },
   title: { 
-    fontSize: 28, 
+    fontSize: 22, 
     fontWeight: '800', 
-    marginHorizontal: 24, 
-    marginTop: 20, 
-    marginBottom: 20, 
-    color: '#023e8a'
+    color: '#023e8a',
+    textAlign: 'center',
+    flex: 1, // Prend tout l'espace central
+  },
+  placeholder: {
+    width: 44, // Même largeur que le bouton retour pour un centrage mathématique parfait
   },
   listContent: { 
     paddingHorizontal: 24, 

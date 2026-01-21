@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
 import { LinearGradient } from 'expo-linear-gradient'; // Ajout pour le bouton
-import { ShieldCheck } from 'lucide-react-native'; // Icône cohérente
+import { ShieldCheck, ChevronLeft } from 'lucide-react-native';
+import { useRouter } from 'expo-router'; // Import du router pour l'action de retour
 
 export default function SignalementScreen() {
+  const router = useRouter();
   const [isAnonyme, setIsAnonyme] = useState(true);
   const [nom, setNom] = useState('');
   const [desc, setDesc] = useState('');
@@ -83,7 +85,16 @@ export default function SignalementScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Fiche de Signalement</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity 
+          onPress={() => router.back()} 
+          style={styles.backButton}
+          activeOpacity={0.7}
+        >
+          <ChevronLeft color="#023e8a" size={32} strokeWidth={2.5} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Fiche de Signalement</Text>
+      </View>
 
       <View style={styles.switchContainer}>
         <View style={{ flex: 1 }}>
@@ -158,8 +169,12 @@ export default function SignalementScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: 'transparent' },
-  title: { fontSize: 28, fontWeight: '800', marginBottom: 25, color: '#023e8a' },
-  
+  title: { 
+    fontSize: 28, 
+    fontWeight: '800', 
+    color: '#023e8a',
+    flex: 1, // Permet au texte de prendre la place restante
+  },
   switchContainer: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -247,5 +262,15 @@ const styles = StyleSheet.create({
   warningBold: {
     fontWeight: '700',
     color: '#1e293b', // Un peu plus foncé pour l'emphase
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 25,
+    marginLeft: -10, // Pour compenser le padding de l'icône et coller au bord
+  },
+  backButton: {
+    padding: 10, // Zone de clic plus large
+    marginRight: 5,
   },
 });
