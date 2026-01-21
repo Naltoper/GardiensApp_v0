@@ -69,7 +69,10 @@ export default function MesSignalementsScreen() {
         activeOpacity={0.8} 
         style={[styles.card, { borderLeftColor: statusColor }]}
         // 3. Navigation vers le chat au clic sur la carte
-        onPress={() => router.push(`/chat/${item.id}`)}
+        onPress={() => router.push({
+        pathname: `../chat/${item.id}`,
+        params: { role: 'user' } // On précise que c'est l'utilisateur qui ouvre
+      })}
       >
         <View style={styles.cardHeader}>
           <Text style={styles.date}>
