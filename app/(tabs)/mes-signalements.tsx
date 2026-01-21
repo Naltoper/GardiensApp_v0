@@ -2,9 +2,11 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, Platform, Touchabl
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
-import { MessageCircle } from 'lucide-react-native'; // Icône pour le footer
+import { MessageCircle } from 'lucide-react-native';
+import { useRouter } from 'expo-router'; // 1. Import du router
 
 export default function MesSignalementsScreen() {
+  const router = useRouter(); // 2. Initialisation du router
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -59,7 +61,6 @@ export default function MesSignalementsScreen() {
   };
 
   const renderItem = ({ item }: { item: any }) => {
-    // Statuts cohérents avec les couleurs de l'accueil
     const isProcessed = item.status !== 'Non traité';
     const statusColor = isProcessed ? '#10ac56' : '#00b4d8';
     
@@ -67,6 +68,8 @@ export default function MesSignalementsScreen() {
       <TouchableOpacity 
         activeOpacity={0.8} 
         style={[styles.card, { borderLeftColor: statusColor }]}
+        // 3. Navigation vers le chat au clic sur la carte
+        onPress={() => router.push(`/chat/${item.id}`)}
       >
         <View style={styles.cardHeader}>
           <Text style={styles.date}>
@@ -142,7 +145,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24, 
     marginTop: 20, 
     marginBottom: 20, 
-    color: '#023e8a' // Bleu foncé de l'index
+    color: '#023e8a'
   },
   listContent: { 
     paddingHorizontal: 24, 
@@ -151,7 +154,7 @@ const styles = StyleSheet.create({
   card: { 
     backgroundColor: '#fff', 
     padding: 20, 
-    borderRadius: 20, // Arrondis plus doux comme l'index
+    borderRadius: 20, 
     marginBottom: 16, 
     borderLeftWidth: 6,
     elevation: 3,
