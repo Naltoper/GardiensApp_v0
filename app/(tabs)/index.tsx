@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ShieldAlert, MessageSquare, Info, Phone, Mail, Lock, Shield } from 'lucide-react-native';
+import DemoRibbon from '../../components/DemoRibbon'; 
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
@@ -66,6 +67,7 @@ export default function HomeScreen() {
           </View>
           <Text style={styles.headerTitle}>Les Gardiens des Calanques</Text>
           <View style={styles.divider} />
+          <DemoRibbon isFloating={false} />
           <Text style={styles.subtitle}>
             {"Un espace sécurisé et bienveillant pour briser le silence et lutter contre le harcélement scolaire.\n\n Votre anonymat est notre priorité."}
           </Text>

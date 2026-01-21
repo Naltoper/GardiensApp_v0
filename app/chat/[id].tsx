@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Send, ChevronLeft, ShieldCheck, Lock } from 'lucide-react-native';
-
-// IMPORT DE TON NOUVEAU COMPOSANT
 import PreviewRibbon from '../../components/PreviewRibbon'; 
 
 export default function ChatScreen() {
