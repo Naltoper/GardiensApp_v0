@@ -87,7 +87,7 @@ export default function SignalementScreen() {
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
       <View style={styles.headerContainer}>
         <TouchableOpacity 
-          onPress={() => router.back()} 
+          onPress={() => router.replace('/(tabs)')} 
           style={styles.backButton}
           activeOpacity={0.7}
         >

@@ -15,6 +15,7 @@ export default function ChatScreen() {
   const flatListRef = useRef<FlatList>(null);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const inputRef = useRef<TextInput>(null); 
 
   const isUserAuthor = role === 'user';
 
@@ -81,7 +82,11 @@ export default function ChatScreen() {
         sender_role: isUserAuthor ? 'user' : 'admin' 
       }]);
     
-    if (!error) setNewMessage('');
+    if (!error) {
+    setNewMessage('');
+    // On force le focus à rester sur l'input pour que le clavier ne se ferme pas
+    inputRef.current?.focus(); 
+    }
     setLoading(false);
   };
 
@@ -96,7 +101,7 @@ export default function ChatScreen() {
         style={styles.headerGradient}
       >
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <TouchableOpacity onPress={() => router.replace('/(tabs)/mes-signalements')} style={styles.backButton}>
             <ChevronLeft color="white" size={30} strokeWidth={2.5} />
           </TouchableOpacity>
           
@@ -123,6 +128,7 @@ export default function ChatScreen() {
         <FlatList
           ref={flatListRef}
           data={messages}
+          keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })} // Scroll auto quand la taille du contenu change (clavier ou nouveau message)
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
@@ -161,6 +167,7 @@ export default function ChatScreen() {
         <View style={styles.inputWrapper}>
           <View style={styles.inputContainer}>
             <TextInput 
+              ref={inputRef}
               style={[styles.input, { outlineStyle: 'none' } as any]}
               value={newMessage} 
               onChangeText={setNewMessage} 
@@ -168,9 +175,12 @@ export default function ChatScreen() {
               placeholderTextColor="#94a3b8"
               multiline // Garde le multiline pour les messages longs
               onKeyPress={(e: any) => {
-                if (Platform.OS === 'web' && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
+                // MODIFICATION DE LA CONDITION ICI
+                const isWebPC = Platform.OS === 'web' && !('ontouchstart' in window);
+
+                if (isWebPC && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
+                  e.preventDefault(); // Empêche le saut de ligne
+                  sendMessage();      // Envoie le message
                 }
               }}
             />

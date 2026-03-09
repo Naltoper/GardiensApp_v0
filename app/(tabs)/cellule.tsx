@@ -35,7 +35,7 @@ export default function CelluleScreen() {
         >
           {/* BOUTON RETOUR POSITIONNÉ EN ABSOLU */}
           <TouchableOpacity 
-            onPress={() => router.back()} 
+            onPress={() => router.replace('/(tabs)')} 
             style={styles.backButton}
             activeOpacity={0.7}
           >

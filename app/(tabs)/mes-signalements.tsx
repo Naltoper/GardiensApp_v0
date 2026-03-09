@@ -113,7 +113,7 @@ export default function MesSignalementsScreen() {
       {/* HEADER CENTRÉ AVEC BOUTON RETOUR */}
       <View style={styles.headerContainer}>
         <TouchableOpacity 
-          onPress={() => router.back()} 
+          onPress={() => router.replace('/(tabs)')} 
           style={styles.backButton}
         >
           <ChevronLeft color="#023e8a" size={28} strokeWidth={2.5} />

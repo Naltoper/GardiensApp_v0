@@ -13,7 +13,7 @@ export default function ContactScreen() {
       {/* HEADER AVEC FLÈCHE ET TITRE CENTRÉ */}
       <View style={styles.headerContainer}>
         <TouchableOpacity 
-          onPress={() => router.back()} 
+          onPress={() => router.replace('/(tabs)')} 
           style={styles.backButton}
           activeOpacity={0.7}
         >
