@@ -15,7 +15,6 @@ export default function ChatScreen() {
   const flatListRef = useRef<FlatList>(null);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const inputRef = useRef<TextInput>(null); 
 
   const isUserAuthor = role === 'user';
 
@@ -71,32 +70,19 @@ export default function ChatScreen() {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || loading) return;
-    
-    const textToSend = newMessage;
-    setNewMessage(''); // On vide l'input tout de suite
-    
-    // Sur Web, on force le focus immédiatement avant même l'appel API
-    // pour signaler au navigateur que l'utilisateur n'a pas fini
-    if (Platform.OS === 'web') {
-      inputRef.current?.focus();
-    }
-
+    if (!newMessage.trim()) return;
     setLoading(true);
+    
     const { error } = await supabase
       .from('messages')
       .insert([{ 
         report_id: id, 
-        content: textToSend, 
+        content: newMessage, 
         sender_role: isUserAuthor ? 'user' : 'admin' 
       }]);
     
+    if (!error) setNewMessage('');
     setLoading(false);
-
-    // Sécurité supplémentaire après le rendu
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 10);
   };
 
   return (
@@ -110,7 +96,7 @@ export default function ChatScreen() {
         style={styles.headerGradient}
       >
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.replace('/(tabs)/mes-signalements')} style={styles.backButton}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <ChevronLeft color="white" size={30} strokeWidth={2.5} />
           </TouchableOpacity>
           
@@ -132,13 +118,11 @@ export default function ChatScreen() {
 
       <KeyboardAvoidingView 
         style={styles.content} 
-        behavior={Platform.OS === 'ios' ? 'padding' : (Platform.OS === 'android' ? 'height' : undefined)}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <FlatList
           ref={flatListRef}
           data={messages}
-          keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })} // Scroll auto quand la taille du contenu change (clavier ou nouveau message)
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
@@ -170,12 +154,13 @@ export default function ChatScreen() {
             );
           }}
         />
-        
+
+        {/* UTILISATION DU COMPOSANT RÉUTILISABLE ICI */}
+        <PreviewRibbon />
 
         <View style={styles.inputWrapper}>
           <View style={styles.inputContainer}>
             <TextInput 
-              ref={inputRef}
               style={[styles.input, { outlineStyle: 'none' } as any]}
               value={newMessage} 
               onChangeText={setNewMessage} 
@@ -183,22 +168,14 @@ export default function ChatScreen() {
               placeholderTextColor="#94a3b8"
               multiline // Garde le multiline pour les messages longs
               onKeyPress={(e: any) => {
-                // MODIFICATION DE LA CONDITION ICI
-                const isWebPC = Platform.OS === 'web' && !('ontouchstart' in window);
-
-                if (isWebPC && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
-                  e.preventDefault(); // Empêche le saut de ligne
-                  sendMessage();      // Envoie le message
+                if (Platform.OS === 'web' && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
                 }
               }}
             />
 
-            <TouchableOpacity 
-              onPress={sendMessage} 
-              disabled={!newMessage.trim() || loading}
-              // @ts-ignore - Empêche le bouton de voler le focus sur Web
-              onMouseDown={(e) => e.preventDefault()} 
-            >
+            <TouchableOpacity onPress={sendMessage} disabled={!newMessage.trim() || loading}>
               <LinearGradient
                 colors={newMessage.trim() ? ["#48a4f4", "#10ac56"] : ["#e2e8f0", "#cbd5e1"]}
                 style={styles.sendBtn}
