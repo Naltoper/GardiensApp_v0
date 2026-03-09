@@ -5,8 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Send, ChevronLeft, ShieldCheck, Lock } from 'lucide-react-native';
 
-// IMPORT DE TON NOUVEAU COMPOSANT
-import PreviewRibbon from '../../components/PreviewRibbon'; 
+
 
 export default function ChatScreen() {
   const { id, role } = useLocalSearchParams();
@@ -155,8 +154,6 @@ export default function ChatScreen() {
           }}
         />
 
-        {/* UTILISATION DU COMPOSANT RÉUTILISABLE ICI */}
-        <PreviewRibbon />
 
         <View style={styles.inputWrapper}>
           <View style={styles.inputContainer}>
@@ -168,11 +165,18 @@ export default function ChatScreen() {
               placeholderTextColor="#94a3b8"
               multiline // Garde le multiline pour les messages longs
               onKeyPress={(e: any) => {
-                if (Platform.OS === 'web' && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
+  // 1. Vérifie si on est sur le Web
+  const isWeb = Platform.OS === 'web';
+  
+  // 2. Vérifie si c'est un appareil non-tactile (PC avec souris/clavier)
+  // window.matchMedia est le moyen le plus fiable de détecter un "curseur" précis
+  const isDesktop = isWeb && window.matchMedia('(pointer: fine)').matches;
+
+  if (isDesktop && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}}
             />
 
             <TouchableOpacity onPress={sendMessage} disabled={!newMessage.trim() || loading}>
