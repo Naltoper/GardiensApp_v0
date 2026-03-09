@@ -95,7 +95,7 @@ export default function ChatScreen() {
         style={styles.headerGradient}
       >
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <TouchableOpacity onPress={() => router.replace('/(tabs)/mes-signalements')} style={styles.backButton}>
             <ChevronLeft color="white" size={30} strokeWidth={2.5} />
           </TouchableOpacity>
           
@@ -165,18 +165,18 @@ export default function ChatScreen() {
               placeholderTextColor="#94a3b8"
               multiline // Garde le multiline pour les messages longs
               onKeyPress={(e: any) => {
-  // 1. Vérifie si on est sur le Web
-  const isWeb = Platform.OS === 'web';
-  
-  // 2. Vérifie si c'est un appareil non-tactile (PC avec souris/clavier)
-  // window.matchMedia est le moyen le plus fiable de détecter un "curseur" précis
-  const isDesktop = isWeb && window.matchMedia('(pointer: fine)').matches;
+                // 1. Vérifie si on est sur le Web
+                const isWeb = Platform.OS === 'web';
+                
+                // 2. Vérifie si c'est un appareil non-tactile (PC avec souris/clavier)
+                // window.matchMedia est le moyen le plus fiable de détecter un "curseur" précis
+                const isDesktop = isWeb && window.matchMedia('(pointer: fine)').matches;
 
-  if (isDesktop && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-}}
+                if (isDesktop && e.nativeEvent.key === 'Enter' && !e.nativeEvent.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                }
+              }}
             />
 
             <TouchableOpacity onPress={sendMessage} disabled={!newMessage.trim() || loading}>
