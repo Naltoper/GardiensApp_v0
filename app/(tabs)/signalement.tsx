@@ -7,6 +7,9 @@ import { ShieldCheck, ChevronLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router'; // Import du router pour l'action de retour
 
 export default function SignalementScreen() {
+  // -------------------------------------------------------------------------
+  // 1. ÉTATS & NAVIGATION
+  // -------------------------------------------------------------------------
   const router = useRouter();
   const [isAnonyme, setIsAnonyme] = useState(true);
   const [nom, setNom] = useState('');
@@ -14,6 +17,9 @@ export default function SignalementScreen() {
   const [loading, setLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
+  // -------------------------------------------------------------------------
+  // 2. LOGIQUE D'ENVOI DU SIGNALEMENT
+  // -------------------------------------------------------------------------
   const handleSend = async () => {
     if (!desc.trim()) {
       Alert.alert("Erreur", "Veuillez décrire la situation.");
@@ -22,6 +28,7 @@ export default function SignalementScreen() {
 
     setLoading(true);
 
+    // --- Gestion du Token Utilisateur (Identification anonyme persistante) ---
     let userToken;
     const TOKEN_KEY = 'user_report_token';
 
@@ -43,6 +50,7 @@ export default function SignalementScreen() {
       userToken = "temp_" + Math.random().toString(36).slice(2, 9);
     }
 
+    // --- Insertion dans la base de données Supabase ---
     const { error } = await supabase
       .from('reports')
       .insert([
@@ -66,6 +74,9 @@ export default function SignalementScreen() {
     }
   };
 
+  // -------------------------------------------------------------------------
+  // 3. VUE DE CONFIRMATION (Affichée après envoi réussi)
+  // -------------------------------------------------------------------------
   if (isSent) {
     return (
       <View style={styles.successContainer}>
@@ -83,8 +94,12 @@ export default function SignalementScreen() {
     );
   }
 
+  // -------------------------------------------------------------------------
+  // 4. FORMULAIRE DE SIGNALEMENT (Rendu principal)
+  // -------------------------------------------------------------------------
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      {/* HEADER : Retour et Titre */}
       <View style={styles.headerContainer}>
         <TouchableOpacity 
           onPress={() => router.replace('/(tabs)')} 
@@ -96,6 +111,7 @@ export default function SignalementScreen() {
         <Text style={styles.title}>Fiche de Signalement</Text>
       </View>
 
+      {/* OPTION ANONYMAT : Switch de confidentialité */}
       <View style={styles.switchContainer}>
         <View style={{ flex: 1 }}>
           <Text style={styles.label}>Rester anonyme ?</Text>
@@ -109,6 +125,7 @@ export default function SignalementScreen() {
         />
       </View>
 
+      {/* IDENTITÉ : Affiché uniquement si non anonyme */}
       {!isAnonyme && (
         <View style={styles.section}>
           <Text style={styles.label}>Ton identité :</Text>
@@ -122,6 +139,7 @@ export default function SignalementScreen() {
         </View>
       )}
 
+      {/* CONTENU : Description des faits */}
       <View style={styles.section}>
         <Text style={styles.label}>Description des faits :</Text>
         <TextInput
@@ -134,13 +152,14 @@ export default function SignalementScreen() {
         />
       </View>
 
-      {/* Bloc d'avertissement pénal */}
+      {/* MENTION LÉGALE : Avertissement pénal */}
       <View style={styles.warningBox}>
         <Text style={styles.warningText}>
           Afin de garantir la protection de tous, rappelle-toi que le signalement de faits volontairement inexacts est sanctionné par la loi (Art. 226-10 du Code pénal).
         </Text>
       </View>
 
+      {/* ACTION : Bouton d'envoi avec dégradé */}
       <TouchableOpacity 
         activeOpacity={0.8}
         onPress={handleSend}
@@ -156,6 +175,7 @@ export default function SignalementScreen() {
         </LinearGradient>
       </TouchableOpacity>
       
+      {/* RAPPEL CONFIDENTIALITÉ */}
       <View style={styles.infoBox}>
         <Text style={styles.infoText}>
           {isAnonyme 

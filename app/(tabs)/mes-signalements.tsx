@@ -6,15 +6,24 @@ import { MessageCircle, ChevronLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
 export default function MesSignalementsScreen() {
+
+  // -------------------------------------------------------------------------
+  // 1. ÉTATS & CONFIGURATION (Hooks)
+  // -------------------------------------------------------------------------
   const router = useRouter();
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+
+  // -------------------------------------------------------------------------
+  // 2. LOGIQUE DE RÉCUPÉRATION DES DONNÉES (Supabase & SecureStore)
+  // -------------------------------------------------------------------------
   const fetchReports = async () => {
     const TOKEN_KEY = 'user_report_token';
     let userToken;
 
+    // Gestion de la persistence selon la plateforme (Web vs Mobile)
     if (Platform.OS === 'web') {
       userToken = localStorage.getItem(TOKEN_KEY);
     } else {
@@ -27,6 +36,7 @@ export default function MesSignalementsScreen() {
       return;
     }
 
+    // Appel à la base de données Supabase
     const { data, error } = await supabase
       .from('reports')
       .select('*')
@@ -40,15 +50,20 @@ export default function MesSignalementsScreen() {
     setRefreshing(false);
   };
 
+  // Chargement initial
   useEffect(() => {
     fetchReports();
   }, []);
 
+  // Gestion du "Pull to Refresh"
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchReports();
   }, []);
 
+  // -------------------------------------------------------------------------
+  // 3. FONCTIONS UTILITAIRES (Formatage)
+  // -------------------------------------------------------------------------
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('fr-FR', {
@@ -60,6 +75,9 @@ export default function MesSignalementsScreen() {
     }).replace(' ', ' à ');
   };
 
+  // -------------------------------------------------------------------------
+  // 4. RENDU DES COMPOSANTS (Items de la liste)
+  // -------------------------------------------------------------------------
   const renderItem = ({ item }: { item: any }) => {
     const isProcessed = item.status !== 'Non traité';
     const statusColor = isProcessed ? '#10ac56' : '#00b4d8';
@@ -73,6 +91,7 @@ export default function MesSignalementsScreen() {
           params: { role: 'user' }
         })}
       >
+        {/* Entête de la carte : Date et Statut */}
         <View style={styles.cardHeader}>
           <Text style={styles.date}>
             Posté le {formatDateTime(item.created_at)}
@@ -85,10 +104,12 @@ export default function MesSignalementsScreen() {
           </View>
         </View>
 
+        {/* Corps de la carte : Aperçu du contenu */}
         <Text style={styles.content} numberOfLines={2}>
           {item.content}
         </Text>
 
+        {/* Pied de la carte : Bouton d'action chat */}
         <View style={styles.cardFooter}>
           <View style={styles.footerLeft}>
             <MessageCircle size={16} color="#48a4f4" style={{ marginRight: 8 }} />
@@ -100,6 +121,9 @@ export default function MesSignalementsScreen() {
     );
   };
 
+  // -------------------------------------------------------------------------
+  // 5. AFFICHAGE DE L'ÉTAT DE CHARGEMENT
+  // -------------------------------------------------------------------------
   if (loading && !refreshing) {
     return (
       <View style={styles.loaderContainer}>
@@ -108,6 +132,9 @@ export default function MesSignalementsScreen() {
     );
   }
 
+  // -------------------------------------------------------------------------
+  // 6. RENDU PRINCIPAL (Layout)
+  // -------------------------------------------------------------------------
   return (
     <View style={styles.container}>
       {/* HEADER CENTRÉ AVEC BOUTON RETOUR */}
@@ -125,6 +152,7 @@ export default function MesSignalementsScreen() {
         <View style={styles.placeholder} />
       </View>
       
+      {/* LISTE DES SIGNALEMENTS */}
       <FlatList
         data={reports}
         keyExtractor={(item) => item.id.toString()}
@@ -133,6 +161,7 @@ export default function MesSignalementsScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#48a4f4" />
         }
+        // Affichage si aucun signalement trouvé
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>Tu n&apos;as pas encore envoyé de signalement.</Text>
