@@ -87,8 +87,8 @@ export default function SignalementScreen() {
         <Text style={styles.successText}>
           Ta parole a été recueillie avec succès. Les membres de la cellule vont analyser ton message et agir pour t&apos;aider.
         </Text>
-        <TouchableOpacity style={styles.btnSecondary} onPress={() => setIsSent(false)}>
-          <Text style={styles.btnSecondaryText}>Nouveau signalement</Text>
+        <TouchableOpacity style={styles.btnSecondary} onPress={() => router.replace('/(tabs)')}>
+          <Text style={styles.btnSecondaryText}>Retour à l&apos;écran d&apos;acceuil</Text>
         </TouchableOpacity>
       </View>
     );
