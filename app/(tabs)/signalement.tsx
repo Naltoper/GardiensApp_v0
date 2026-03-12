@@ -21,56 +21,82 @@ export default function SignalementScreen() {
   // 2. LOGIQUE D'ENVOI DU SIGNALEMENT
   // -------------------------------------------------------------------------
   const handleSend = async () => {
+    // Vérification de remplissage
     if (!desc.trim()) {
-      Alert.alert("Erreur", "Veuillez décrire la situation.");
+      if (Platform.OS === 'web') {
+        alert("Veuillez décrire la situation.");
+      } else {
+        Alert.alert("Erreur", "Veuillez décrire la situation.");
+      }
       return;
     }
 
-    setLoading(true);
+    const confirmationMessage = "Je confirme que les informations transmises sont sincères. Un signalement volontairement inexact peut donner lieu à des sanctions (Art. 226-10 du Code pénal).";
 
-    // --- Gestion du Token Utilisateur (Identification anonyme persistante) ---
-    let userToken;
-    const TOKEN_KEY = 'user_report_token';
+    // --- LOGIQUE DE CONFIRMATION (Adaptée Web et Mobile) ---
+    const processUpload = async () => {
+      setLoading(true);
+      let userToken;
+      const TOKEN_KEY = 'user_report_token';
 
-    try {
-      if (Platform.OS === 'web') {
-        userToken = localStorage.getItem(TOKEN_KEY);
-        if (!userToken) {
-          userToken = "user_" + Math.random().toString(36).slice(2, 9);
-          localStorage.setItem(TOKEN_KEY, userToken);
+      try {
+        if (Platform.OS === 'web') {
+          userToken = localStorage.getItem(TOKEN_KEY);
+          if (!userToken) {
+            userToken = "user_" + Math.random().toString(36).slice(2, 9);
+            localStorage.setItem(TOKEN_KEY, userToken);
+          }
+        } else {
+          userToken = await SecureStore.getItemAsync(TOKEN_KEY);
+          if (!userToken) {
+            userToken = "user_" + Math.random().toString(36).slice(2, 9);
+            await SecureStore.setItemAsync(TOKEN_KEY, userToken);
+          }
         }
-      } else {
-        userToken = await SecureStore.getItemAsync(TOKEN_KEY);
-        if (!userToken) {
-          userToken = "user_" + Math.random().toString(36).slice(2, 9);
-          await SecureStore.setItemAsync(TOKEN_KEY, userToken);
-        }
+      } catch (e) {
+        userToken = "temp_" + Math.random().toString(36).slice(2, 9);
       }
-    } catch (e) {
-      userToken = "temp_" + Math.random().toString(36).slice(2, 9);
-    }
 
-    // --- Insertion dans la base de données Supabase ---
-    const { error } = await supabase
-      .from('reports')
-      .insert([
-        { 
-          content: desc, 
-          is_anonyme: isAnonyme, 
-          author_name: isAnonyme ? "Anonyme" : nom,
-          user_token: userToken,
-          status: "Non traité"
-        },
-      ]);
+      const { error } = await supabase
+        .from('reports')
+        .insert([
+          { 
+            content: desc, 
+            is_anonyme: isAnonyme, 
+            author_name: isAnonyme ? "Anonyme" : nom,
+            user_token: userToken,
+            status: "Non traité"
+          },
+        ]);
 
-    setLoading(false);
+      setLoading(false);
 
-    if (error) {
-      Alert.alert("Erreur", "Impossible d'envoyer le signalement.");
+      if (error) {
+        Platform.OS === 'web' ? alert("Erreur: Impossible d'envoyer le signalement.") : Alert.alert("Erreur", "Impossible d'envoyer le signalement.");
+      } else {
+        setIsSent(true); 
+        setDesc('');
+        setNom('');
+      }
+    };
+
+    // --- DÉCLENCHEMENT DE L'ALERTE SELON LA PLATEFORME ---
+    if (Platform.OS === 'web') {
+      // Sur Web, on utilise confirm() qui renvoie true ou false
+      const hasConfirmed = window.confirm(confirmationMessage);
+      if (hasConfirmed) {
+        processUpload();
+      }
     } else {
-      setIsSent(true); 
-      setDesc('');
-      setNom('');
+      // Sur Mobile, on utilise Alert.alert original
+      Alert.alert(
+        "Confirmation importante",
+        confirmationMessage,
+        [
+          { text: "Modifier", style: "cancel" },
+          { text: "Confirmer l'envoi", onPress: () => processUpload() }
+        ]
+      );
     }
   };
 
