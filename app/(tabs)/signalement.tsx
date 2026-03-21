@@ -84,17 +84,23 @@ export default function SignalementScreen() {
       }
 
       const { error } = await supabase
-        .from('reports')
-        .insert([
-          { 
-            content: desc, 
-            is_anonyme: isAnonyme, 
-            author_name: isAnonyme ? "Anonyme" : nom,
-            user_token: userToken,
-            // On pourra ajouter les nouvelles colonnes ici plus tard
-            status: "Non traité"
-          },
-        ]);
+  .from('reports')
+  .insert([
+    { 
+      content: desc, 
+      is_anonyme: isAnonyme, 
+      author_name: isAnonyme ? "Anonyme" : nom,
+      user_token: userToken,
+      status: "Non traité",
+      // Nouvelles colonnes ajoutées ici :
+      type_harcelement: typeHarcelement,
+      urgence: urgence,
+      date_faits: dateApproximative,
+      lieu: lieu,
+      frequence: frequence,
+      nb_victimes: nbVictimes
+    },
+  ]);
 
       setLoading(false);
 
