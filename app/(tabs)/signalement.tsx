@@ -223,67 +223,82 @@ export default function SignalementScreen() {
         </View>
       )}
 
-      {/* --- LES MENUS DÉROULANTS --- */}
-      
-      <CustomSelect 
-        label="Type de harcèlement :"
-        value={typeHarcelement}
-        options={["Cyber-harcèlement", "Physique", "Moral", "Exclusion", "Autre"]}
-        visible={showTypes}
-        onToggle={() => toggleMenu('types')}
-        onSelect={setTypeHarcelement}
-        placeholder="Sélectionner un type..."
-      />
+      {/* --- LES MENUS DÉROULANTS DEUX PAR DEUX --- */}
 
-      <CustomSelect 
-        label="Niveau d'urgence :"
-        value={urgence}
-        options={["Faible (Besoin d'en parler)", "Moyen (Situation répétée)", "Élevé (Danger immédiat)"]}
-        visible={showUrgence}
-        onToggle={() => toggleMenu('urgence')}
-        onSelect={setUrgence}
-        placeholder="Évaluer l'urgence..."
-      />
+      <View style={styles.row}>
+        <View style={styles.column}>
+          <CustomSelect 
+            label="Type de harcèlement :"
+            value={typeHarcelement}
+            options={["Cyber-harcèlement", "Physique", "Moral", "Exclusion", "Autre"]}
+            visible={showTypes}
+            onToggle={() => toggleMenu('types')}
+            onSelect={setTypeHarcelement}
+            placeholder="Sélectionner..."
+          />
+        </View>
+        <View style={styles.column}>
+          <CustomSelect 
+            label="Niveau d'urgence :"
+            value={urgence}
+            options={["Faible", "Moyen", "Élevé"]}
+            visible={showUrgence}
+            onToggle={() => toggleMenu('urgence')}
+            onSelect={setUrgence}
+            placeholder="Évaluer..."
+          />
+        </View>
+      </View>
 
-      <CustomSelect 
-        label="Date approximative :"
-        value={dateApproximative}
-        options={["Aujourd'hui", "Cette semaine", "Le mois dernier", "Depuis longtemps"]}
-        visible={showDate}
-        onToggle={() => toggleMenu('date')}
-        onSelect={setDateApproximative}
-        placeholder="Quand cela a-t-il commencé ?"
-      />
+      <View style={styles.row}>
+        <View style={styles.column}>
+          <CustomSelect 
+            label="Date :"
+            value={dateApproximative}
+            options={["Aujourd'hui", "Une semaine", "Un mois", "Plus d'un mois"]}
+            visible={showDate}
+            onToggle={() => toggleMenu('date')}
+            onSelect={setDateApproximative}
+            placeholder="Quand ?"
+          />
+        </View>
+        <View style={styles.column}>
+          <CustomSelect 
+            label="Lieu des faits:"
+            value={lieu}
+            options={["Classe", "Récré", "Web", "Trajet", "Autre"]}
+            visible={showLieu}
+            onToggle={() => toggleMenu('lieu')}
+            onSelect={setLieu}
+            placeholder="Où ?"
+          />
+        </View>
+      </View>
 
-      <CustomSelect 
-        label="Lieu des faits :"
-        value={lieu}
-        options={["En classe", "Cour de récréation", "Réseaux sociaux", "Trajet école", "Autre"]}
-        visible={showLieu}
-        onToggle={() => toggleMenu('lieu')}
-        onSelect={setLieu}
-        placeholder="Où cela se passe-t-il ?"
-      />
-
-      <CustomSelect 
-        label="Fréquence :"
-        value={frequence}
-        options={["Une seule fois", "De temps en temps", "Tous les jours"]}
-        visible={showFrequence}
-        onToggle={() => toggleMenu('frequence')}
-        onSelect={setFrequence}
-        placeholder="Est-ce fréquent ?"
-      />
-
-      <CustomSelect 
-        label="Nombre de victimes :"
-        value={nbVictimes}
-        options={["Seulement moi", "2 à 3 personnes", "Tout un groupe"]}
-        visible={showNbVictimes}
-        onToggle={() => toggleMenu('nbVictimes')}
-        onSelect={setNbVictimes}
-        placeholder="Combien de personnes ?"
-      />
+      <View style={styles.row}>
+        <View style={styles.column}>
+          <CustomSelect 
+            label="Fréquence :"
+            value={frequence}
+            options={["Une seule fois", "De temps en temps", "Tous les jours"]}
+            visible={showFrequence}
+            onToggle={() => toggleMenu('frequence')}
+            onSelect={setFrequence}
+            placeholder="Souvent ?"
+          />
+        </View>
+        <View style={styles.column}>
+          <CustomSelect 
+            label="Nombre de victimes :"
+            value={nbVictimes}
+            options={["Moi", "2-3", "Groupe"]}
+            visible={showNbVictimes}
+            onToggle={() => toggleMenu('nbVictimes')}
+            onSelect={setNbVictimes}
+            placeholder="Combien ?"
+          />
+        </View>
+      </View>
 
       {/* Description des faits */}
       <View style={styles.section}>
@@ -471,5 +486,14 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 10, // Zone de clic plus large
     marginRight: 5,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 0, // On gère l'espacement dans la ligne
+  },
+  column: {
+    flex: 1, // Chaque menu prend 50% de la largeur
+    marginHorizontal: 5, // Petit espace entre les deux menus
   },
 });
