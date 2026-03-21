@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
 import { LinearGradient } from 'expo-linear-gradient'; // Ajout pour le bouton
-import { ShieldCheck, ChevronLeft } from 'lucide-react-native';
+import { ShieldCheck, ChevronLeft, ChevronUp, ChevronDown } from 'lucide-react-native';
 import { useRouter } from 'expo-router'; // Import du router pour l'action de retour
 
 export default function SignalementScreen() {
@@ -11,22 +11,48 @@ export default function SignalementScreen() {
   // 1. ÉTATS & NAVIGATION
   // -------------------------------------------------------------------------
   const router = useRouter();
+  // 1. ÉTATS DE DONNÉES
   const [isAnonyme, setIsAnonyme] = useState(true);
   const [nom, setNom] = useState('');
   const [desc, setDesc] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  // Nouvelles données
+  const [typeHarcelement, setTypeHarcelement] = useState('');
+  const [urgence, setUrgence] = useState('');
+  const [dateApproximative, setDateApproximative] = useState('');
+  const [lieu, setLieu] = useState('');
+  const [frequence, setFrequence] = useState('');
+  const [nbVictimes, setNbVictimes] = useState('');
+
+  // 2. ÉTATS DE VISIBILITÉ DES MENUS
+  const [showTypes, setShowTypes] = useState(false);
+  const [showUrgence, setShowUrgence] = useState(false);
+  const [showDate, setShowDate] = useState(false);
+  const [showLieu, setShowLieu] = useState(false);
+  const [showFrequence, setShowFrequence] = useState(false);
+  const [showNbVictimes, setShowNbVictimes] = useState(false);
+
+  // Fonction utilitaire pour fermer les autres menus quand on en ouvre un
+  const toggleMenu = (menu: string) => {
+    setShowTypes(menu === 'types' ? !showTypes : false);
+    setShowUrgence(menu === 'urgence' ? !showUrgence : false);
+    setShowDate(menu === 'date' ? !showDate : false);
+    setShowLieu(menu === 'lieu' ? !showLieu : false);
+    setShowFrequence(menu === 'frequence' ? !showFrequence : false);
+    setShowNbVictimes(menu === 'nbVictimes' ? !showNbVictimes : false);
+  };
 
   // -------------------------------------------------------------------------
   // 2. LOGIQUE D'ENVOI DU SIGNALEMENT
   // -------------------------------------------------------------------------
   const handleSend = async () => {
     // Vérification de remplissage
-    if (!desc.trim()) {
+    if (!desc.trim() || !typeHarcelement) {
       if (Platform.OS === 'web') {
-        alert("Veuillez décrire la situation.");
+        alert("Veuillez remplirVeuillez remplir le type de harcèlement et la description.");
       } else {
-        Alert.alert("Erreur", "Veuillez décrire la situation.");
+        Alert.alert("Erreur", "Veuillez remplirVeuillez remplir le type de harcèlement et la description.");
       }
       return;
     }
@@ -65,6 +91,7 @@ export default function SignalementScreen() {
             is_anonyme: isAnonyme, 
             author_name: isAnonyme ? "Anonyme" : nom,
             user_token: userToken,
+            // On pourra ajouter les nouvelles colonnes ici plus tard
             status: "Non traité"
           },
         ]);
@@ -120,6 +147,31 @@ export default function SignalementScreen() {
     );
   }
 
+  // Composant réutilisable pour les menus déroulants
+  const CustomSelect = ({ label, value, options, visible, onToggle, onSelect, placeholder }: any) => (
+    <View style={styles.section}>
+      <Text style={styles.label}>{label}</Text>
+      <TouchableOpacity style={styles.customSelect} onPress={onToggle} activeOpacity={0.7}>
+        <Text style={[styles.selectText, !value && { color: '#94a3b8' }]}>
+          {value ? value : placeholder}
+        </Text>
+        {visible ? <ChevronUp size={20} color="#023e8a" /> : <ChevronDown size={20} color="#023e8a" />}
+      </TouchableOpacity>
+      {visible && (
+        <View style={styles.optionsContainer}>
+          {options.map((item: string) => (
+            <TouchableOpacity 
+              key={item} 
+              style={styles.optionItem} 
+              onPress={() => { onSelect(item); onToggle(); }}
+            >
+              <Text style={styles.optionText}>{item}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+    </View>
+  );
   // -------------------------------------------------------------------------
   // 4. FORMULAIRE DE SIGNALEMENT (Rendu principal)
   // -------------------------------------------------------------------------
@@ -165,7 +217,69 @@ export default function SignalementScreen() {
         </View>
       )}
 
-      {/* CONTENU : Description des faits */}
+      {/* --- LES MENUS DÉROULANTS --- */}
+      
+      <CustomSelect 
+        label="Type de harcèlement :"
+        value={typeHarcelement}
+        options={["Cyber-harcèlement", "Physique", "Moral", "Exclusion", "Autre"]}
+        visible={showTypes}
+        onToggle={() => toggleMenu('types')}
+        onSelect={setTypeHarcelement}
+        placeholder="Sélectionner un type..."
+      />
+
+      <CustomSelect 
+        label="Niveau d'urgence :"
+        value={urgence}
+        options={["Faible (Besoin d'en parler)", "Moyen (Situation répétée)", "Élevé (Danger immédiat)"]}
+        visible={showUrgence}
+        onToggle={() => toggleMenu('urgence')}
+        onSelect={setUrgence}
+        placeholder="Évaluer l'urgence..."
+      />
+
+      <CustomSelect 
+        label="Date approximative :"
+        value={dateApproximative}
+        options={["Aujourd'hui", "Cette semaine", "Le mois dernier", "Depuis longtemps"]}
+        visible={showDate}
+        onToggle={() => toggleMenu('date')}
+        onSelect={setDateApproximative}
+        placeholder="Quand cela a-t-il commencé ?"
+      />
+
+      <CustomSelect 
+        label="Lieu des faits :"
+        value={lieu}
+        options={["En classe", "Cour de récréation", "Réseaux sociaux", "Trajet école", "Autre"]}
+        visible={showLieu}
+        onToggle={() => toggleMenu('lieu')}
+        onSelect={setLieu}
+        placeholder="Où cela se passe-t-il ?"
+      />
+
+      <CustomSelect 
+        label="Fréquence :"
+        value={frequence}
+        options={["Une seule fois", "De temps en temps", "Tous les jours"]}
+        visible={showFrequence}
+        onToggle={() => toggleMenu('frequence')}
+        onSelect={setFrequence}
+        placeholder="Est-ce fréquent ?"
+      />
+
+      <CustomSelect 
+        label="Nombre de victimes :"
+        value={nbVictimes}
+        options={["Seulement moi", "2 à 3 personnes", "Tout un groupe"]}
+        visible={showNbVictimes}
+        onToggle={() => toggleMenu('nbVictimes')}
+        onSelect={setNbVictimes}
+        placeholder="Combien de personnes ?"
+      />
+
+      {/* Description des faits */}
       <View style={styles.section}>
         <Text style={styles.label}>Description des faits :</Text>
         <TextInput
@@ -240,6 +354,39 @@ const styles = StyleSheet.create({
   label: { fontSize: 16, fontWeight: '700', color: '#1e293b', marginBottom: 8 },
   subLabel: { fontSize: 13, color: '#64748b', marginTop: 2 },
   
+  customSelect: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  selectText: { fontSize: 15, color: '#1e293b' },
+  
+  optionsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    overflow: 'hidden',
+    // Petit effet d'ombre pour que le menu "flotte"
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  optionItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  optionText: { fontSize: 15, color: '#475569' },
+
   inputSmall: { 
     borderWidth: 1, 
     borderColor: '#e2e8f0', 
