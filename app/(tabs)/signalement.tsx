@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { LinearGradient } from 'expo-linear-gradient'; // Ajout pour le bouton
 import { ShieldCheck, ChevronLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router'; // Import du router pour l'action de retour
+import { Picker } from '@react-native-picker/picker';
 
 export default function SignalementScreen() {
   // -------------------------------------------------------------------------
@@ -16,17 +17,24 @@ export default function SignalementScreen() {
   const [desc, setDesc] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  // --- NOUVEAUX ÉTATS POUR LES MENUS DÉROULANTS ---
+  const [typeHarcelement, setTypeHarcelement] = useState('');
+  const [urgence, setUrgence] = useState('Faible');
+  const [dateApproximative, setDateApproximative] = useState('');
+  const [lieu, setLieu] = useState('');
+  const [frequence, setFrequence] = useState('');
+  const [nbVictimes, setNbVictimes] = useState('1');
 
   // -------------------------------------------------------------------------
   // 2. LOGIQUE D'ENVOI DU SIGNALEMENT
   // -------------------------------------------------------------------------
   const handleSend = async () => {
     // Vérification de remplissage
-    if (!desc.trim()) {
+    if (!desc.trim() || !typeHarcelement) {
       if (Platform.OS === 'web') {
-        alert("Veuillez décrire la situation.");
+        alert("Veuillez remplirVeuillez remplir le type de harcèlement et la description.");
       } else {
-        Alert.alert("Erreur", "Veuillez décrire la situation.");
+        Alert.alert("Erreur", "Veuillez remplirVeuillez remplir le type de harcèlement et la description.");
       }
       return;
     }
@@ -65,6 +73,7 @@ export default function SignalementScreen() {
             is_anonyme: isAnonyme, 
             author_name: isAnonyme ? "Anonyme" : nom,
             user_token: userToken,
+            // On pourra ajouter les nouvelles colonnes ici plus tard
             status: "Non traité"
           },
         ]);
@@ -164,6 +173,70 @@ export default function SignalementScreen() {
           />
         </View>
       )}
+
+      {/* --- NOUVEAUX CHAMPS (MENUS DÉROULANTS) --- */}
+      
+      <View style={styles.section}>
+        <Text style={styles.label}>Type de harcèlement :</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={typeHarcelement}
+            onValueChange={(itemValue) => setTypeHarcelement(itemValue)}
+          >
+            <Picker.Item label="Sélectionner..." value="" color="#94a3b8" />
+            <Picker.Item label="Cyber-harcèlement" value="cyber" />
+            <Picker.Item label="Harcèlement physique" value="physique" />
+            <Picker.Item label="Harcèlement moral/verbal" value="moral" />
+            <Picker.Item label="Exclusion sociale" value="exclusion" />
+            <Picker.Item label="Autre" value="autre" />
+          </Picker>
+        </View>
+      </View>
+
+      <View style={styles.row}>
+        <View style={[styles.section, { flex: 1, marginRight: 10 }]}>
+          <Text style={styles.label}>Urgence :</Text>
+          <View style={styles.pickerContainer}>
+            <Picker selectedValue={urgence} onValueChange={setUrgence}>
+              <Picker.Item label="Faible" value="Faible" />
+              <Picker.Item label="Moyenne" value="Moyenne" />
+              <Picker.Item label="Critique" value="Critique" />
+            </Picker>
+          </View>
+        </View>
+
+        <View style={[styles.section, { flex: 1 }]}>
+          <Text style={styles.label}>Nb. Victimes :</Text>
+          <View style={styles.pickerContainer}>
+            <Picker selectedValue={nbVictimes} onValueChange={setNbVictimes}>
+              <Picker.Item label="1" value="1" />
+              <Picker.Item label="2 à 3" value="2-3" />
+              <Picker.Item label="+ de 3" value="plus" />
+            </Picker>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Fréquence des faits :</Text>
+        <View style={styles.pickerContainer}>
+          <Picker selectedValue={frequence} onValueChange={setFrequence}>
+            <Picker.Item label="Une seule fois" value="une_fois" />
+            <Picker.Item label="De temps en temps" value="parfois" />
+            <Picker.Item label="Tous les jours" value="quotidien" />
+          </Picker>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Lieu :</Text>
+        <TextInput 
+          style={styles.inputSmall} 
+          placeholder="Ex: Cour de récré, couloir, sortie..." 
+          value={lieu} 
+          onChangeText={setLieu} 
+        />
+      </View>
 
       {/* CONTENU : Description des faits */}
       <View style={styles.section}>
@@ -318,5 +391,18 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 10, // Zone de clic plus large
     marginRight: 5,
+  },
+  // NOUVEAUX STYLES POUR PICKER
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    overflow: 'hidden', // Important pour arrondir les bords sur Android
+    justifyContent: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
