@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Platform, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, 
+  Platform, TouchableOpacity, RefreshControl, Modal, ScrollView} from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import * as SecureStore from 'expo-secure-store';
-import { MessageCircle, ChevronLeft } from 'lucide-react-native';
+import { MessageCircle, ChevronLeft, Info, X } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
 export default function MesSignalementsScreen() {
@@ -14,6 +15,8 @@ export default function MesSignalementsScreen() {
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
 
   // -------------------------------------------------------------------------
@@ -96,6 +99,14 @@ export default function MesSignalementsScreen() {
           <Text style={styles.date}>
             Posté le {formatDateTime(item.created_at)}
           </Text>
+          
+          <TouchableOpacity 
+          onPress={() => { setSelectedReport(item); setModalVisible(true); }}
+          style={{ padding: 5 }}
+          >
+            <Info size={20} color="#94a3b8" />
+          </TouchableOpacity>
+
           <View style={[styles.badge, { backgroundColor: isProcessed ? '#e6f4f1' : '#e0f2fe' }]}>
             <View style={[styles.dot, { backgroundColor: statusColor }]} />
             <Text style={[styles.badgeText, { color: statusColor }]}>
@@ -169,6 +180,64 @@ export default function MesSignalementsScreen() {
           </View>
         }
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalView}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Détails du signalement</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <X size={24} color="#023e8a" />
+              </TouchableOpacity>
+            </View>
+
+            {selectedReport && (
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Type de harcèlement :</Text>
+                  <Text style={styles.detailValue}>{selectedReport.type_harcelement || "Non précisé"}</Text>
+                </View>
+                
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Niveau d&apos;urgence :</Text>
+                  <Text style={[styles.detailValue, {color: selectedReport.urgence?.includes('Élevé') ? '#e63946' : '#334155'}]}>
+                    {selectedReport.urgence || "Non précisé"}
+                  </Text>
+                </View>
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Lieu des faits :</Text>
+                  <Text style={styles.detailValue}>{selectedReport.lieu || "Non précisé"}</Text>
+                </View>
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Date / Période :</Text>
+                  <Text style={styles.detailValue}>{selectedReport.date_faits || "Non précisé"}</Text>
+                </View>
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Fréquence :</Text>
+                  <Text style={styles.detailValue}>{selectedReport.frequence || "Non précisé"}</Text>
+                </View>
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Victimes :</Text>
+                  <Text style={styles.detailValue}>{selectedReport.nb_victimes || "Non précisé"}</Text>
+                </View>
+
+                <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
+                  <Text style={styles.detailLabel}>Description complète :</Text>
+                  <Text style={styles.fullDescription}>{selectedReport.content}</Text>
+                </View>
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -297,5 +366,61 @@ const styles = StyleSheet.create({
     color: '#94a3b8', 
     fontSize: 14,
     lineHeight: 20
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end', // Le modal arrive du bas
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 25,
+    maxHeight: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#023e8a',
+  },
+  detailRow: {
+    marginBottom: 15,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8fafc',
+  },
+  detailLabel: {
+    fontSize: 12,
+    color: '#94a3b8',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  detailValue: {
+    fontSize: 16,
+    color: '#334155',
+    fontWeight: '600',
+  },
+  fullDescription: {
+    fontSize: 15,
+    color: '#475569',
+    lineHeight: 22,
+    marginTop: 5,
+    fontStyle: 'italic'
+  },
 });
