@@ -1,10 +1,34 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image, Platform, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ShieldAlert, MessageSquare, Info, Phone, Mail, Shield } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
+
+
+const InstallBanner = () => {
+  // On n'affiche la bannière QUE sur le Web et sur un navigateur Mobile
+  // (Note: Sur PC, Platform.OS est aussi 'web', mais on cible l'usage mobile)
+  if (Platform.OS !== 'web') return null;
+
+  const apkUrl = "https://lgsspvcxayanodmvgkzb.supabase.co/storage/v1/object/public/apps/Archive.zip"; // TODO Remplace par ton futur lien
+// TODO
+  return (
+    <View style={styles.bannerContainer}>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.bannerTitle}>Application Intervenants</Text>
+        <Text style={styles.bannerSubtitle}>Installez l&apos;app pour recevoir les alertes en direct.</Text>
+      </View>
+      <TouchableOpacity 
+        onPress={() => Linking.openURL(apkUrl)}
+        style={styles.downloadBtn}
+      >
+        <Text style={styles.downloadBtnText}>Installer</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -48,6 +72,9 @@ export default function HomeScreen() {
     <View style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         
+        {/* --- AJOUT DE LA BANNIÈRE ICI --- */}
+        <InstallBanner />
+
         {/* En-tête avec votre logo en rond */}
         <View style={styles.header}>
           <View style={styles.logoContainer}>
@@ -222,5 +249,43 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 2,
     fontWeight: '500'
-  }
+  },
+  bannerContainer: {
+    backgroundColor: '#023e8a',
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 15,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#48a4f4ff',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  bannerTitle: {
+    color: 'white',
+    fontWeight: '800',
+    fontSize: 14,
+  },
+  bannerSubtitle: {
+    color: '#caf0f8',
+    fontSize: 11,
+    marginTop: 2,
+  },
+  downloadBtn: {
+    backgroundColor: '#76c893',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 10,
+    marginLeft: 10,
+  },
+  downloadBtnText: {
+    color: '#023e8a',
+    fontWeight: '800',
+    fontSize: 13,
+  },
 });
