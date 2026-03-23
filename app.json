@@ -6,8 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "notification": {
-      "icon": "./assets/images/favicon.png", // <--- Ton icône blanche ici
-      "color": "#023e8a" // <--- La couleur du petit rond sous l'icône (ta charte)
+      "icon": "./assets/images/favicon.png",
+      "color": "#023e8a"
     },
     "scheme": "gardiensappv0",
     "userInterfaceStyle": "automatic",
@@ -22,8 +22,9 @@
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "softwareKeyboardLayoutMode": "resize",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.roblof.gdc"
@@ -51,6 +52,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "efe52b7b-c599-4fde-a75f-8ba47a8426a5"
+      }
     }
   }
 }

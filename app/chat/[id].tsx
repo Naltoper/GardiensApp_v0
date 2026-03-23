@@ -117,11 +117,18 @@ export default function ChatScreen() {
 
       <KeyboardAvoidingView 
         style={styles.content} 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        // Sur Android, 'height' est souvent plus stable qu' 'undefined' ou 'padding'
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        // On ajoute un offset uniquement si nécessaire (si le header cache l'input)
+        // ICI : On ajuste la hauteur manuellement
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 35} // <-- Augmente le 25 si c'est encore trop bas
       >
         <FlatList
           ref={flatListRef}
           data={messages}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 0,
+          }}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })} // Scroll auto quand la taille du contenu change (clavier ou nouveau message)
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
