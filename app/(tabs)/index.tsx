@@ -12,7 +12,7 @@ const InstallBanner = () => {
   // (Note: Sur PC, Platform.OS est aussi 'web', mais on cible l'usage mobile)
   if (Platform.OS !== 'web') return null;
 
-  const apkUrl = "https://lgsspvcxayanodmvgkzb.supabase.co/storage/v1/object/public/apps/Archive.zip"; // TODO Remplace par ton futur lien
+  const apkUrl = "https://github.com/Naltoper/GardiensApp_v0/releases/download/v1.0.0/GDC.apk"; // lien apk
 // TODO
   return (
     <View style={styles.bannerContainer}>
